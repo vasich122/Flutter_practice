@@ -47,6 +47,10 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Text(
           'Соваренко Василий Васильевич\nГруппа: ИКБО-06-22\n22И1798',
           textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 20,
+            color: Colors.red,
+          ),
         ),
       ),
     );

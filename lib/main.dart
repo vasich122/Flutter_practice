@@ -54,19 +54,22 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
-            const SizedBox(
-              width: 100,
-            ),
-            ElevatedButton(
-              onPressed: null,
-              child: const Text('Пример кнопки'),
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.amber),
-                shape: MaterialStateProperty.all(
-                  RoundedRectangleBorder(
+            const SizedBox(width: 50),
+            Container(
+              padding: const EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                color: Colors.amber,
+                borderRadius: BorderRadius.circular(50),
+              ),
+              child: ElevatedButton(
+                onPressed: null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.amber,
+                  shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(50),
                   ),
                 ),
+                child: const Text('Пример кнопки'),
               ),
             ),
           ],

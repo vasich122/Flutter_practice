@@ -122,14 +122,14 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Center(
+      body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(
-                'Соваренко Василий Васильевич\nГруппа: ИКБО-06-22\nID: 22И1798',
+                'Соваренко Василий Васильевич\nГруппа: ИКБО-06-22\nID: 22И1798\nСоваренко Василий Васильевич\nГруппа: ИКБО-06-22\nID: 22И1798\nСоваренко Василий Васильевич\nГруппа: ИКБО-06-22\nID: 22И1798\n',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 20, color: Colors.red),
               ),

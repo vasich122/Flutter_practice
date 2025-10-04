@@ -11,7 +11,7 @@ class GradeScreen extends StatefulWidget {
 
 class _GradeScreenState extends State<GradeScreen> {
   late double _grade;
-  final List<Map<String, dynamic>> _grades = []; // список предметов и оценок
+  final List<Map<String, dynamic>> _grades = [];
 
   final TextEditingController _subjectController = TextEditingController();
   final TextEditingController _gradeController = TextEditingController();
@@ -29,7 +29,11 @@ class _GradeScreenState extends State<GradeScreen> {
       final gradeValue = double.tryParse(gradeText);
       if (gradeValue != null && gradeValue >= 1.0 && gradeValue <= 5.0) {
         setState(() {
-          _grades.add({'subject': subject, 'grade': gradeValue});
+          _grades.add({
+            'key': UniqueKey(),
+            'subject': subject,
+            'grade': gradeValue
+          });
           _updateAverageGrade();
           _subjectController.clear();
           _gradeController.clear();
@@ -38,7 +42,6 @@ class _GradeScreenState extends State<GradeScreen> {
     }
   }
 
-  // теперь удаляется первый элемент списка
   void _removeFirstSubject() {
     if (_grades.isNotEmpty) {
       setState(() {
@@ -76,7 +79,7 @@ class _GradeScreenState extends State<GradeScreen> {
   }
 
   void _goBack() {
-    Navigator.pop(context, _grade); // возвращаем обновлённый средний балл
+    Navigator.pop(context, _grade);
   }
 
   @override
@@ -113,7 +116,6 @@ class _GradeScreenState extends State<GradeScreen> {
             ),
             const SizedBox(height: 10),
 
-            // кнопки управления списком
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -130,11 +132,12 @@ class _GradeScreenState extends State<GradeScreen> {
             ),
             const SizedBox(height: 20),
             Expanded(
-              child: ListView.separated(
+              child: ListView.builder(
                 itemCount: _grades.length,
                 itemBuilder: (context, index) {
                   final item = _grades[index];
                   return ListTile(
+                    key: item['key'],
                     leading: const Icon(Icons.book),
                     title: Text(item['subject']),
                     trailing: Text(
@@ -143,12 +146,6 @@ class _GradeScreenState extends State<GradeScreen> {
                     ),
                   );
                 },
-                separatorBuilder: (context, index) => const Divider(
-                  color: Colors.grey,
-                  thickness: 1,
-                  indent: 16,
-                  endIndent: 16,
-                ),
               ),
             ),
 

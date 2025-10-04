@@ -11,6 +11,10 @@ class AttendanceScreen extends StatefulWidget {
 
 class _AttendanceScreenState extends State<AttendanceScreen> {
   late int _attendance;
+  final List<Map<String, dynamic>> _subjects = []; // список предметов с посещаемостью
+
+  final TextEditingController _subjectController = TextEditingController();
+  final TextEditingController _percentController = TextEditingController();
 
   @override
   void initState() {
@@ -20,18 +24,41 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
   void _increaseAttendance() {
     setState(() {
-      if (_attendance < 100) _attendance++; // не больше 100%
+      if (_attendance < 100) _attendance++;
     });
   }
 
   void _decreaseAttendance() {
     setState(() {
-      if (_attendance > 0) _attendance--; // не меньше 0%
+      if (_attendance > 0) _attendance--;
     });
   }
 
+  void _addSubject() {
+    final subject = _subjectController.text.trim();
+    final percentText = _percentController.text.trim();
+    if (subject.isNotEmpty && percentText.isNotEmpty) {
+      final percent = int.tryParse(percentText);
+      if (percent != null && percent >= 0 && percent <= 100) {
+        setState(() {
+          _subjects.add({'subject': subject, 'percent': percent});
+          _subjectController.clear();
+          _percentController.clear();
+        });
+      }
+    }
+  }
+
+  void _removeFirstSubject() {
+    if (_subjects.isNotEmpty) {
+      setState(() {
+        _subjects.removeAt(0);
+      });
+    }
+  }
+
   void _goBack() {
-    Navigator.pop(context, _attendance); // возвращаем обновлённое значение
+    Navigator.pop(context, _attendance);
   }
 
   @override
@@ -41,16 +68,15 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         title: const Text('Посещаемость студента'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Посещаемость: $_attendance%',
+              'Общая посещаемость: $_attendance%',
               style: const TextStyle(
                 fontSize: 20,
                 color: Colors.orange,
-                decoration: TextDecoration.none,
               ),
             ),
             const SizedBox(height: 20),
@@ -64,6 +90,66 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
               child: const Text('Уменьшить посещаемость'),
             ),
             const SizedBox(height: 20),
+            TextField(
+              controller: _subjectController,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Введите название предмета',
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: _percentController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Введите процент посещаемости',
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: _addSubject,
+                  child: const Text('Добавить предмет'),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: _removeFirstSubject,
+                  child: const Text('Удалить первый'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: _subjects
+                      .map(
+                        (subject) => Column(
+                      children: [
+                        ListTile(
+                          leading:
+                          const Icon(Icons.book, color: Colors.blue),
+                          title: Text(subject['subject']),
+                          trailing: Text('${subject['percent']}%'),
+                        ),
+                        const Divider(
+                          color: Colors.grey,
+                          height: 1,
+                        ),
+                      ],
+                    ),
+                  )
+                      .toList(),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 10),
             ElevatedButton(
               onPressed: _goBack,
               child: const Text('Вернуться на предыдущий экран'),

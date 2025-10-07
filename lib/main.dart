@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'academic_screen.dart';
-import 'course_screen.dart';
-import 'attendance_screen.dart';
-import 'grade_screen.dart';
+import 'features/academic/screens/academic_screen.dart';
+import 'features/course/screens/course_screen.dart';
+import 'features/attendance/screens/attendance_screen.dart';
+import 'features/grade/state/grades_container.dart';
 
 void main() {
   runApp(const MyApp());
@@ -42,7 +42,6 @@ class _MyHomePageState extends State<MyHomePage> {
   int _statusIndex = 0;
   String _currentCourse = '3 курс';
   int _attendance = 92;
-  double _averageGrade = 4.5;
 
   void _changeStatus() {
     setState(() {
@@ -87,32 +86,30 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  Future<void> _goToGradeScreen() async {
-    final updatedGrade = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => GradeScreen(currentGrade: _averageGrade),
-      ),
-    );
-
-    if (updatedGrade != null) {
-      setState(() {
-        _averageGrade = updatedGrade;
-      });
-    }
-  }
-
-  void _goToAcademicScreen() {
+  void _goToAcademicScreen(double averageGrade) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => AcademicScreen(
           currentCourse: _currentCourse,
           initialAttendance: _attendance,
-          averageGrade: _averageGrade,
+          averageGrade: averageGrade,
         ),
       ),
     );
+  }
+
+  Future<void> _goToGradesContainer() async {
+    final updatedAverage = await Navigator.push<double>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const GradesContainer(),
+      ),
+    );
+
+    if (updatedAverage != null) {
+      _goToAcademicScreen(updatedAverage);
+    }
   }
 
   @override
@@ -129,7 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
             const Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(
-                'Соваренко Василий Васильевич\nГруппа: ИКБО-06-22\nID: 22И1798\nСоваренко Василий Васильевич\nГруппа: ИКБО-06-22\nID: 22И1798\nСоваренко Василий Васильевич\nГруппа: ИКБО-06-22\nID: 22И1798\n',
+                'Соваренко Василий Васильевич\nГруппа: ИКБО-06-22\nID: 22И1798',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 20, color: Colors.red),
               ),
@@ -164,14 +161,8 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _goToGradeScreen,
-              child: Text('Изменить средний балл ($_averageGrade)'),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _goToAcademicScreen,
-              child: Text(
-                  'Перейти к академической информации ($_currentCourse, $_attendance%, $_averageGrade)'),
+              onPressed: _goToGradesContainer,
+              child: const Text('Управление оценками'),
             ),
           ],
         ),

@@ -119,7 +119,15 @@
 /Users/vasilijsovarenko/.pub-cache/hosted/pub.dev/vector_math-2.2.0/lib/src/vector_math_64/vector4.dart
 /Users/vasilijsovarenko/.pub-cache/hosted/pub.dev/vector_math-2.2.0/lib/vector_math_64.dart
 /Users/vasilijsovarenko/.pub-cache/hosted/pub.dev/vm_service-15.0.2/LICENSE
-/Users/vasilijsovarenko/AndroidStudioProjects/Pr1/lib/academic_screen.dart
+/Users/vasilijsovarenko/AndroidStudioProjects/Pr1/lib/features/academic/screens/academic_screen.dart
+/Users/vasilijsovarenko/AndroidStudioProjects/Pr1/lib/features/attendance/screens/attendance_screen.dart
+/Users/vasilijsovarenko/AndroidStudioProjects/Pr1/lib/features/course/screens/course_screen.dart
+/Users/vasilijsovarenko/AndroidStudioProjects/Pr1/lib/features/grade/models/grade_model.dart
+/Users/vasilijsovarenko/AndroidStudioProjects/Pr1/lib/features/grade/screens/grade_form_screen.dart
+/Users/vasilijsovarenko/AndroidStudioProjects/Pr1/lib/features/grade/screens/grade_screen.dart
+/Users/vasilijsovarenko/AndroidStudioProjects/Pr1/lib/features/grade/state/grades_container.dart
+/Users/vasilijsovarenko/AndroidStudioProjects/Pr1/lib/features/grade/widgets/grade_row.dart
+/Users/vasilijsovarenko/AndroidStudioProjects/Pr1/lib/features/grade/widgets/grade_table.dart
 /Users/vasilijsovarenko/AndroidStudioProjects/Pr1/lib/main.dart
 /Users/vasilijsovarenko/AndroidStudioProjects/Pr1/pubspec.yaml
 /Users/vasilijsovarenko/Downloads/flutter/bin/cache/artifacts/material_fonts/MaterialIcons-Regular.otf

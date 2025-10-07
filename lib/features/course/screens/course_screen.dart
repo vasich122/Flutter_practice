@@ -58,10 +58,14 @@ class _CourseScreenState extends State<CourseScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Выбор курса'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -70,23 +74,26 @@ class _CourseScreenState extends State<CourseScreen> {
           children: [
             Text(
               'Текущий курс: ${_courses[_courseIndex]}',
-              style: const TextStyle(fontSize: 20, color: Colors.purple),
+              style: textTheme.bodyLarge?.copyWith(
+                color: colorScheme.secondary,
+              ),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _nextCourse,
-              child: const Text(
+              child: Text(
                 'Следующий курс',
-                style: TextStyle(fontSize: 16, color: Colors.black),
+                style: textTheme.labelLarge,
               ),
             ),
             const SizedBox(height: 20),
 
             TextField(
               controller: _subjectController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Введите предмет данного курса',
+                labelStyle: TextStyle(color: colorScheme.onSurface),
               ),
             ),
             const SizedBox(height: 10),
@@ -96,17 +103,17 @@ class _CourseScreenState extends State<CourseScreen> {
               children: [
                 ElevatedButton(
                   onPressed: _addSubject,
-                  child: const Text(
+                  child: Text(
                     'Добавить предмет',
-                    style: TextStyle(fontSize: 16, color: Colors.black),
+                    style: textTheme.labelLarge,
                   ),
                 ),
                 const SizedBox(width: 10),
                 ElevatedButton(
                   onPressed: _removeFirstSubject,
-                  child: const Text(
+                  child: Text(
                     'Удалить первый',
-                    style: TextStyle(fontSize: 16, color: Colors.black),
+                    style: textTheme.labelLarge,
                   ),
                 ),
               ],
@@ -120,13 +127,13 @@ class _CourseScreenState extends State<CourseScreen> {
                   return Column(
                     children: [
                       ListTile(
-                        leading: const Icon(Icons.book, color: Colors.blue),
+                        leading: Icon(Icons.book, color: colorScheme.primary),
                         title: Text(
                           _attendanceSubjects[index],
-                          style: const TextStyle(fontSize: 18),
+                          style: textTheme.bodyMedium,
                         ),
                       ),
-                      const Divider(color: Colors.grey, height: 1),
+                      Divider(color: colorScheme.outline, height: 1),
                     ],
                   );
                 },
@@ -136,9 +143,9 @@ class _CourseScreenState extends State<CourseScreen> {
             const SizedBox(height: 10),
             ElevatedButton(
               onPressed: _goBack,
-              child: const Text(
+              child: Text(
                 'Вернуться на предыдущий экран',
-                style: TextStyle(fontSize: 16, color: Colors.black),
+                style: textTheme.labelLarge,
               ),
             ),
           ],

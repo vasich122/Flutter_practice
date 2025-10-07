@@ -11,7 +11,7 @@ class AttendanceScreen extends StatefulWidget {
 
 class _AttendanceScreenState extends State<AttendanceScreen> {
   late int _attendance;
-  final List<Map<String, dynamic>> _subjects = []; // список предметов с посещаемостью
+  final List<Map<String, dynamic>> _subjects = [];
 
   final TextEditingController _subjectController = TextEditingController();
   final TextEditingController _percentController = TextEditingController();
@@ -63,10 +63,14 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Посещаемость студента'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -74,36 +78,37 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
           children: [
             Text(
               'Общая посещаемость: $_attendance%',
-              style: const TextStyle(
-                fontSize: 20,
-                color: Colors.orange,
+              style: textTheme.bodyLarge?.copyWith(
+                color: colorScheme.secondary,
               ),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _increaseAttendance,
-              child: const Text('Увеличить посещаемость'),
+              child: Text('Увеличить посещаемость'),
             ),
             const SizedBox(height: 10),
             ElevatedButton(
               onPressed: _decreaseAttendance,
-              child: const Text('Уменьшить посещаемость'),
+              child: Text('Уменьшить посещаемость'),
             ),
             const SizedBox(height: 20),
             TextField(
               controller: _subjectController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Введите название предмета',
+                labelStyle: TextStyle(color: colorScheme.onSurface),
               ),
             ),
             const SizedBox(height: 10),
             TextField(
               controller: _percentController,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Введите процент посещаемости',
+                labelStyle: TextStyle(color: colorScheme.onSurface),
               ),
             ),
             const SizedBox(height: 10),
@@ -113,12 +118,12 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
               children: [
                 ElevatedButton(
                   onPressed: _addSubject,
-                  child: const Text('Добавить предмет'),
+                  child: Text('Добавить предмет'),
                 ),
                 const SizedBox(width: 10),
                 ElevatedButton(
                   onPressed: _removeFirstSubject,
-                  child: const Text('Удалить первый'),
+                  child: Text('Удалить первый'),
                 ),
               ],
             ),
@@ -132,13 +137,12 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                         (subject) => Column(
                       children: [
                         ListTile(
-                          leading:
-                          const Icon(Icons.book, color: Colors.blue),
+                          leading: Icon(Icons.book, color: colorScheme.primary),
                           title: Text(subject['subject']),
                           trailing: Text('${subject['percent']}%'),
                         ),
-                        const Divider(
-                          color: Colors.grey,
+                        Divider(
+                          color: colorScheme.outline,
                           height: 1,
                         ),
                       ],
@@ -152,7 +156,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
             const SizedBox(height: 10),
             ElevatedButton(
               onPressed: _goBack,
-              child: const Text('Вернуться на предыдущий экран'),
+              child: Text('Вернуться на предыдущий экран'),
             ),
           ],
         ),

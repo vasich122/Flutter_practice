@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class AttendanceScreen extends StatefulWidget {
   final int currentAttendance;
@@ -60,44 +61,58 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   void _goBack() {
     Navigator.pop(context, _attendance);
   }
-
   @override
   Widget build(BuildContext context) {
+    const String imageUrl = 'https://cdn-icons-png.flaticon.com/512/7514/7514354.png';
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Посещаемость студента'),
         backgroundColor: colorScheme.primary,
         foregroundColor: colorScheme.onPrimary,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            Text(
-              'Общая посещаемость: $_attendance%',
-              style: textTheme.bodyLarge?.copyWith(
-                color: colorScheme.secondary,
+            CachedNetworkImage(
+              imageUrl: imageUrl,
+              height: 200,
+              width: 200,
+              imageBuilder: (context, imageProvider) => CircleAvatar(
+                backgroundImage: imageProvider,
+                radius: 5,
+              ),
+              progressIndicatorBuilder: (context, url, progress) =>
+              const CircularProgressIndicator(),
+              errorWidget: (context, url, error) => const Icon(
+                Icons.error,
+                color: Colors.red,
+                size: 60,
               ),
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _increaseAttendance,
-              child: Text('Увеличить посещаемость'),
+            Text(
+              'Общая посещаемость: $_attendance%',
+              style: textTheme.bodyLarge
+                  ?.copyWith(color: colorScheme.secondary, fontSize: 18),
             ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: _decreaseAttendance,
-              child: Text('Уменьшить посещаемость'),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(onPressed: _increaseAttendance, child: const Text('Увеличить')),
+                const SizedBox(width: 10),
+                ElevatedButton(onPressed: _decreaseAttendance, child: const Text('Уменьшить')),
+              ],
             ),
             const SizedBox(height: 20),
             TextField(
               controller: _subjectController,
               decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Введите название предмета',
+                border: const OutlineInputBorder(),
+                labelText: 'Название предмета',
                 labelStyle: TextStyle(color: colorScheme.onSurface),
               ),
             ),
@@ -106,57 +121,41 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
               controller: _percentController,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Введите процент посещаемости',
+                border: const OutlineInputBorder(),
+                labelText: 'Процент посещаемости',
                 labelStyle: TextStyle(color: colorScheme.onSurface),
               ),
             ),
             const SizedBox(height: 10),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ElevatedButton(
-                  onPressed: _addSubject,
-                  child: Text('Добавить предмет'),
-                ),
+                ElevatedButton(onPressed: _addSubject, child: const Text('Добавить')),
                 const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: _removeFirstSubject,
-                  child: Text('Удалить первый'),
-                ),
+                ElevatedButton(onPressed: _removeFirstSubject, child: const Text('Удалить первый')),
               ],
             ),
             const SizedBox(height: 20),
-
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: _subjects
-                      .map(
-                        (subject) => Column(
-                      children: [
-                        ListTile(
-                          leading: Icon(Icons.book, color: colorScheme.primary),
-                          title: Text(subject['subject']),
-                          trailing: Text('${subject['percent']}%'),
-                        ),
-                        Divider(
-                          color: colorScheme.outline,
-                          height: 1,
-                        ),
-                      ],
+            Column(
+              children: _subjects
+                  .map(
+                    (subject) => Column(
+                  children: [
+                    ListTile(
+                      leading: Icon(Icons.book, color: colorScheme.primary),
+                      title: Text(subject['subject']),
+                      trailing: Text('${subject['percent']}%'),
                     ),
-                  )
-                      .toList(),
+                    Divider(color: colorScheme.outline, height: 1),
+                  ],
                 ),
-              ),
+              )
+                  .toList(),
             ),
-
             const SizedBox(height: 10),
             ElevatedButton(
               onPressed: _goBack,
-              child: Text('Вернуться на предыдущий экран'),
+              child: const Text('Вернуться на предыдущий экран'),
             ),
           ],
         ),

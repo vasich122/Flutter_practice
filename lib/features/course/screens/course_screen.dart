@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class CourseScreen extends StatefulWidget {
   final String currentCourse;
@@ -61,66 +62,78 @@ class _CourseScreenState extends State<CourseScreen> {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
+    const String courseImageUrl =
+        'https://cdn-icons-png.flaticon.com/512/4196/4196591.png';
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Выбор курса'),
         backgroundColor: colorScheme.primary,
         foregroundColor: colorScheme.onPrimary,
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            const SizedBox(height: 20),
+            // Аватарка курса
+            CachedNetworkImage(
+              imageUrl: courseImageUrl,
+              height: 120,
+              width: 120,
+              imageBuilder: (context, imageProvider) => CircleAvatar(
+                backgroundImage: imageProvider,
+                radius: 60,
+              ),
+              progressIndicatorBuilder: (context, url, progress) =>
+              const CircularProgressIndicator(),
+              errorWidget: (context, url, error) => const Icon(
+                Icons.error,
+                color: Colors.red,
+                size: 60,
+              ),
+            ),
+            const SizedBox(height: 20),
+
             Text(
               'Текущий курс: ${_courses[_courseIndex]}',
               style: textTheme.bodyLarge?.copyWith(
                 color: colorScheme.secondary,
+                fontSize: 18,
               ),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _nextCourse,
-              child: Text(
-                'Следующий курс',
-                style: textTheme.labelLarge,
-              ),
+              child: Text('Следующий курс', style: textTheme.labelLarge),
             ),
             const SizedBox(height: 20),
-
             TextField(
               controller: _subjectController,
               decoration: InputDecoration(
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
                 labelText: 'Введите предмет данного курса',
                 labelStyle: TextStyle(color: colorScheme.onSurface),
               ),
             ),
             const SizedBox(height: 10),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
                   onPressed: _addSubject,
-                  child: Text(
-                    'Добавить предмет',
-                    style: textTheme.labelLarge,
-                  ),
+                  child: Text('Добавить предмет', style: textTheme.labelLarge),
                 ),
                 const SizedBox(width: 10),
                 ElevatedButton(
                   onPressed: _removeFirstSubject,
-                  child: Text(
-                    'Удалить первый',
-                    style: textTheme.labelLarge,
-                  ),
+                  child: Text('Удалить первый', style: textTheme.labelLarge),
                 ),
               ],
             ),
             const SizedBox(height: 20),
-
-            Expanded(
+            Container(
+              height: 300,
               child: ListView.builder(
                 itemCount: _attendanceSubjects.length,
                 itemBuilder: (context, index) {
@@ -128,10 +141,8 @@ class _CourseScreenState extends State<CourseScreen> {
                     children: [
                       ListTile(
                         leading: Icon(Icons.book, color: colorScheme.primary),
-                        title: Text(
-                          _attendanceSubjects[index],
-                          style: textTheme.bodyMedium,
-                        ),
+                        title: Text(_attendanceSubjects[index],
+                            style: textTheme.bodyMedium),
                       ),
                       Divider(color: colorScheme.outline, height: 1),
                     ],
@@ -139,14 +150,11 @@ class _CourseScreenState extends State<CourseScreen> {
                 },
               ),
             ),
-
             const SizedBox(height: 10),
             ElevatedButton(
               onPressed: _goBack,
-              child: Text(
-                'Вернуться на предыдущий экран',
-                style: textTheme.labelLarge,
-              ),
+              child: Text('Вернуться на предыдущий экран',
+                  style: textTheme.labelLarge),
             ),
           ],
         ),

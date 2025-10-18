@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class AcademicScreen extends StatefulWidget {
   final String currentCourse;
@@ -41,6 +42,7 @@ class _AcademicScreenState extends State<AcademicScreen> {
 
   @override
   Widget build(BuildContext context) {
+    const String imageUrl = 'https://upload.wikimedia.org/wikipedia/ru/thumb/6/61/РТУ_МИРЭА_логотип.png/330px-РТУ_МИРЭА_логотип.png';
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
@@ -50,43 +52,66 @@ class _AcademicScreenState extends State<AcademicScreen> {
         backgroundColor: colorScheme.primary,
         foregroundColor: colorScheme.onPrimary,
       ),
-      body: Center(
-        child:
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                'Курс: ${widget.currentCourse}\nСредний балл: ${widget.averageGrade}\nПосещаемость: ${widget.initialAttendance}%\n${_institutes[_instituteIndex]}',
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: 20),
+              CachedNetworkImage(
+                imageUrl: imageUrl,
+                height: 200,
+                width: 200,
+                imageBuilder: (context, imageProvider) => CircleAvatar(
+                  backgroundImage: imageProvider,
+                  radius: 60,
+                ),
+                progressIndicatorBuilder: (context, url, progress) =>
+                const CircularProgressIndicator(),
+                errorWidget: (context, url, error) => const Icon(
+                  Icons.error,
+                  color: Colors.red,
+                  size: 60,
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              Text(
+                'Курс: ${widget.currentCourse}\n'
+                    'Средний балл: ${widget.averageGrade.toStringAsFixed(1)}\n'
+                    'Посещаемость: ${widget.initialAttendance}%\n'
+                    '${_institutes[_instituteIndex]}',
                 textAlign: TextAlign.center,
                 style: textTheme.bodyLarge?.copyWith(
                   color: colorScheme.primary,
+                  fontSize: 18,
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _nextInstitute,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: colorScheme.secondary,
-              ),
-              child: Text(
-                'Сменить институт',
-                style: textTheme.labelLarge?.copyWith(
-                  color: colorScheme.onSecondary,
+
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _nextInstitute,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: colorScheme.secondary,
+                ),
+                child: Text(
+                  'Сменить институт',
+                  style: textTheme.labelLarge?.copyWith(
+                    color: colorScheme.onSecondary,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _goBack,
-              child: Text(
-                'Вернуться на главный экран',
-                style: textTheme.labelLarge,
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _goBack,
+                child: Text(
+                  'Вернуться на главный экран',
+                  style: textTheme.labelLarge,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

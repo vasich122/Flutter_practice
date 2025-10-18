@@ -115,7 +115,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    const String imageUrl = 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+    const String imageUrl =
+        'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -172,19 +173,38 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             const SizedBox(height: 20),
+
             ElevatedButton(
               onPressed: _goToCourseScreen,
               child: const Text('Выбрать курс'),
             ),
             const SizedBox(height: 20),
+
             ElevatedButton(
               onPressed: _goToAttendanceScreen,
               child: Text('Изменить посещаемость ($_attendance%)'),
             ),
             const SizedBox(height: 20),
+
             ElevatedButton(
               onPressed: _goToGradesContainer,
               child: const Text('Управление оценками'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AcademicScreen(
+                      currentCourse: _currentCourse,
+                      initialAttendance: _attendance,
+                      averageGrade: 4.0,
+                    ),
+                  ),
+                );
+              },
+              child: const Text('Просмотр статуса и информации студента'),
             ),
           ],
         ),

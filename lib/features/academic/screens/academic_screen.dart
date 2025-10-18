@@ -51,7 +51,19 @@ class _AcademicScreenState extends State<AcademicScreen> {
         foregroundColor: colorScheme.onPrimary,
       ),
       body: Center(
-        child: Column(
+        child: CachedNetworkImage(
+            imageUrl: _url,
+            progressIndicatorBuilder:(context, url, progress)=>
+                const CircularProgressIndicator(),
+            errorWidget: (context, url, error) =>const Center(
+              child: Icon(
+                Icons.error,
+                color: Colors.red,
+              ),
+            )
+          )
+            
+        Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(

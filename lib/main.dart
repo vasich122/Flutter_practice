@@ -65,7 +65,6 @@ class _MyHomePageState extends State<MyHomePage>
     );
   }
 
-  // Универсальный метод для push с кнопкой pop
   void _navigateWithPop(Widget screen) {
     Navigator.push(
       context,

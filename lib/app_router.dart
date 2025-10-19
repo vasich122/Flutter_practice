@@ -1,23 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
+import 'main.dart';
 import 'features/course/screens/course_screen.dart';
 import 'features/attendance/screens/attendance_screen.dart';
-import 'features/academic/screens/academic_screen.dart';
 import 'features/grade/state/grades_container.dart';
-import 'main.dart';
+import 'features/grade/screens/grade_screen.dart';
+import 'features/grade/screens/grade_form_screen.dart';
+import 'features/academic/screens/academic_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
   routes: [
-    // Главный экран
     GoRoute(
       path: '/',
-      name: 'main',
+      name: 'home',
       builder: (context, state) => const MyHomePage(title: 'Профиль студента'),
     ),
-
-    // Academic Screen
+    GoRoute(
+      path: '/attendance',
+      name: 'attendance',
+      builder: (context, state) {
+        final attendance = state.extra as int? ?? 0;
+        return AttendanceScreen(currentAttendance: attendance);
+      },
+    ),
+    GoRoute(
+      path: '/course',
+      name: 'course',
+      builder: (context, state) {
+        final course = state.extra as String? ?? '';
+        return CourseScreen(currentCourse: course);
+      },
+    ),
     GoRoute(
       path: '/academic',
       name: 'academic',
@@ -30,27 +44,6 @@ final GoRouter appRouter = GoRouter(
         );
       },
     ),
-
-    // Attendance Screen
-    GoRoute(
-      path: '/attendance',
-      name: 'attendance',
-      builder: (context, state) {
-        final attendance = state.extra as int? ?? 0;
-        return AttendanceScreen(currentAttendance: attendance);
-      },
-    ),
-
-    // Course Screen
-    GoRoute(
-      path: '/course',
-      name: 'course',
-      builder: (context, state) {
-        final course = state.extra as String? ?? '';
-        return CourseScreen(currentCourse: course);
-      },
-    ),
-
     GoRoute(
       path: '/grades',
       name: 'grades',
@@ -59,7 +52,16 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           path: 'form',
           name: 'grade_form',
-          builder: (context, state) => const GradesContainer(),
+          builder: (context, state) {
+            return GradeFormScreen(
+              onSave: (subject, grade) {
+                print('Добавлена оценка: $subject - $grade');
+              },
+              onCancel: () {
+                Navigator.of(context).pop();
+              },
+            );
+          },
         ),
       ],
     ),

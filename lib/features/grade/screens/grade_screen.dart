@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../models/grade_model.dart';
-import '../widgets/grade_table.dart';
 
 class GradeScreen extends StatelessWidget {
   final List<GradeModel> grades;
@@ -36,21 +34,9 @@ class GradeScreen extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 20),
-            CachedNetworkImage(
-              imageUrl: gradeImageUrl,
-              height: 120,
-              width: 120,
-              imageBuilder: (context, imageProvider) => CircleAvatar(
-                backgroundImage: imageProvider,
-                radius: 60,
-              ),
-              progressIndicatorBuilder: (context, url, progress) =>
-              const CircularProgressIndicator(),
-              errorWidget: (context, url, error) => const Icon(
-                Icons.error,
-                color: Colors.red,
-                size: 60,
-              ),
+            CircleAvatar(
+              radius: 60,
+              backgroundImage: NetworkImage(gradeImageUrl),
             ),
             const SizedBox(height: 20),
             Text(
@@ -68,9 +54,18 @@ class GradeScreen extends StatelessWidget {
             const SizedBox(height: 20),
             SizedBox(
               height: 300,
-              child: GradeTable(
-                grades: grades,
-                onRemove: onRemove,
+              child: ListView.builder(
+                itemCount: grades.length,
+                itemBuilder: (context, index) {
+                  final grade = grades[index];
+                  return ListTile(
+                    title: Text('${grade.subject} - ${grade.grade}'),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete),
+                      onPressed: () => onRemove(grade.id),
+                    ),
+                  );
+                },
               ),
             ),
           ],

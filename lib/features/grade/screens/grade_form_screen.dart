@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../models/grade_model.dart';
 
 class GradeFormScreen extends StatefulWidget {
   final void Function(String subject, double grade) onSave;
@@ -22,16 +23,22 @@ class _GradeFormScreenState extends State<GradeFormScreen> {
     final subject = _subjectController.text.trim();
     final gradeText = _gradeController.text.trim();
     final grade = double.tryParse(gradeText);
+
     if (subject.isNotEmpty && grade != null && grade >= 1.0 && grade <= 5.0) {
-      widget.onSave(subject, grade);
+      widget.onSave(subject, grade); // Сохраняем через контейнер
       _subjectController.clear();
       _gradeController.clear();
     }
   }
 
+  void _cancel() {
+    widget.onCancel(); // Вызываем метод контейнера для возврата к списку
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Добавить оценку'),
@@ -39,7 +46,7 @@ class _GradeFormScreenState extends State<GradeFormScreen> {
         foregroundColor: colorScheme.onPrimary,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: widget.onCancel,
+          onPressed: _cancel,
         ),
       ),
       body: Padding(

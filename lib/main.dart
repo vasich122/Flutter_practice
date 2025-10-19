@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'features/course/screens/course_screen.dart';
 import 'features/attendance/screens/attendance_screen.dart';
 import 'features/grade/state/grades_container.dart';
 import 'features/academic/screens/academic_screen.dart';
-import 'app_router.dart';
-import 'package:go_router/go_router.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,12 +13,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
+    return MaterialApp(
       title: 'Личный кабинет студента',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      routerConfig: appRouter,
+      home: const MyHomePage(title: 'Профиль студента'),
     );
   }
 }
@@ -47,12 +44,12 @@ class _MyHomePageState extends State<MyHomePage>
   String _currentCourse = '3 курс';
   int _attendance = 92;
 
-  late final TabController _tabController;
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
   }
 
   void _changeStatus() {
@@ -68,6 +65,25 @@ class _MyHomePageState extends State<MyHomePage>
     );
   }
 
+  // Универсальный метод для push с кнопкой pop
+  void _navigateWithPop(Widget screen) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => Scaffold(
+          appBar: AppBar(
+            title: const Text('Навигация'),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
+          body: screen,
+        ),
+      ),
+    );
+  }
+
   @override
   void dispose() {
     _tabController.dispose();
@@ -76,65 +92,60 @@ class _MyHomePageState extends State<MyHomePage>
 
   @override
   Widget build(BuildContext context) {
-    const String imageUrl =
-        'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
-
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
-            Tab(text: 'Курс'),
-            Tab(text: 'Посещаемость'),
-            Tab(text: 'Оценки'),
-            Tab(text: 'Статус'),
+            Tab(text: 'Успеваемость'),
+            Tab(text: 'Академ. инфо'),
           ],
         ),
       ),
       body: TabBarView(
         controller: _tabController,
+        physics: const NeverScrollableScrollPhysics(),
         children: [
-          // Курс
-          Center(
-            child: ElevatedButton(
-              onPressed: () {
-                context.push('/course', extra: _currentCourse);
-              },
-              child: const Text('Выбрать курс'),
-            ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () => _navigateWithPop(
+                  AttendanceScreen(currentAttendance: _attendance),
+                ),
+                child: const Text('Посещаемость'),
+              ),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () => _navigateWithPop(
+                  const GradesContainer(),
+                ),
+                child: const Text('Оценки'),
+              ),
+            ],
           ),
-          // Посещаемость
-          Center(
-            child: ElevatedButton(
-              onPressed: () {
-                context.push('/attendance', extra: _attendance);
-              },
-              child: Text('Изменить посещаемость ($_attendance%)'),
-            ),
-          ),
-          // Оценки
-          Center(
-            child: ElevatedButton(
-              onPressed: () {
-                context.push('/grades');
-              },
-              child: const Text('Управление оценками'),
-            ),
-          ),
-          // Academic
-          Center(
-            child: ElevatedButton(
-              onPressed: () {
-                context.push('/academic', extra: {
-                  'currentCourse': _currentCourse,
-                  'attendance': _attendance,
-                  'averageGrade': 4.0,
-                });
-              },
-              child: const Text('Просмотр статуса студента'),
-            ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () => _navigateWithPop(
+                  AcademicScreen(
+                    currentCourse: _currentCourse,
+                    initialAttendance: _attendance,
+                    averageGrade: 4.0,
+                  ),
+                ),
+                child: const Text('Академическая информация'),
+              ),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () => _navigateWithPop(
+                  CourseScreen(currentCourse: _currentCourse),
+                ),
+                child: const Text('Выбор курса'),
+              ),
+            ],
           ),
         ],
       ),

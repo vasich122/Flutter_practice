@@ -1,3 +1,4 @@
+// lib/features/academic/screens/course_screen.dart
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -30,6 +31,12 @@ class _CourseScreenState extends State<CourseScreen> {
     if (_courseIndex == -1) _courseIndex = 2;
   }
 
+  @override
+  void dispose() {
+    _subjectController.dispose();
+    super.dispose();
+  }
+
   void _nextCourse() {
     setState(() {
       _courseIndex = (_courseIndex + 1) % _courses.length;
@@ -53,7 +60,7 @@ class _CourseScreenState extends State<CourseScreen> {
     }
   }
 
-  void _goBack() {
+  void _saveAndGoBack() {
     Navigator.pop(context, _courses[_courseIndex]);
   }
 
@@ -76,7 +83,6 @@ class _CourseScreenState extends State<CourseScreen> {
         child: Column(
           children: [
             const SizedBox(height: 20),
-            // Аватарка курса
             CachedNetworkImage(
               imageUrl: courseImageUrl,
               height: 120,
@@ -94,7 +100,6 @@ class _CourseScreenState extends State<CourseScreen> {
               ),
             ),
             const SizedBox(height: 20),
-
             Text(
               'Текущий курс: ${_courses[_courseIndex]}',
               style: textTheme.bodyLarge?.copyWith(
@@ -132,7 +137,7 @@ class _CourseScreenState extends State<CourseScreen> {
               ],
             ),
             const SizedBox(height: 20),
-            Container(
+            SizedBox(
               height: 300,
               child: ListView.builder(
                 itemCount: _attendanceSubjects.length,
@@ -141,8 +146,10 @@ class _CourseScreenState extends State<CourseScreen> {
                     children: [
                       ListTile(
                         leading: Icon(Icons.book, color: colorScheme.primary),
-                        title: Text(_attendanceSubjects[index],
-                            style: textTheme.bodyMedium),
+                        title: Text(
+                          _attendanceSubjects[index],
+                          style: textTheme.bodyMedium,
+                        ),
                       ),
                       Divider(color: colorScheme.outline, height: 1),
                     ],
@@ -150,12 +157,9 @@ class _CourseScreenState extends State<CourseScreen> {
                 },
               ),
             ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: _goBack,
-              child: Text('Вернуться на предыдущий экран',
-                  style: textTheme.labelLarge),
-            ),
+            const SizedBox(height: 20),
+            // Опционально: кнопка "Сохранить и выйти" (если нужно явное подтверждение)
+            // Но обычно достаточно системной кнопки "Назад"
           ],
         ),
       ),

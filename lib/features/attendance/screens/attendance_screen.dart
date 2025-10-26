@@ -1,3 +1,4 @@
+// lib/features/attendance/screens/attendance_screen.dart
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -23,6 +24,13 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     _attendance = widget.currentAttendance;
   }
 
+  @override
+  void dispose() {
+    _subjectController.dispose();
+    _percentController.dispose();
+    super.dispose();
+  }
+
   void _increaseAttendance() {
     setState(() {
       if (_attendance < 100) _attendance++;
@@ -46,7 +54,11 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
           _subjectController.clear();
           _percentController.clear();
         });
+      } else {
+        _showError('Процент должен быть от 0 до 100');
       }
+    } else {
+      _showError('Заполните все поля');
     }
   }
 
@@ -58,107 +70,113 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     }
   }
 
-  void _goBack() {
-    Navigator.pop(context, _attendance);
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Theme.of(context).colorScheme.error,
+        duration: const Duration(seconds: 2),
+      ),
+    );
   }
+
   @override
   Widget build(BuildContext context) {
     const String imageUrl = 'https://cdn-icons-png.flaticon.com/512/7514/7514354.png';
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Посещаемость студента'),
-        backgroundColor: colorScheme.primary,
-        foregroundColor: colorScheme.onPrimary,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            CachedNetworkImage(
-              imageUrl: imageUrl,
-              height: 200,
-              width: 200,
-              imageBuilder: (context, imageProvider) => CircleAvatar(
-                backgroundImage: imageProvider,
-                radius: 5,
-              ),
-              progressIndicatorBuilder: (context, url, progress) =>
-              const CircularProgressIndicator(),
-              errorWidget: (context, url, error) => const Icon(
-                Icons.error,
-                color: Colors.red,
-                size: 60,
-              ),
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          CachedNetworkImage(
+            imageUrl: imageUrl,
+            height: 100,
+            width: 100,
+            imageBuilder: (context, imageProvider) => CircleAvatar(
+              backgroundImage: imageProvider,
+              radius: 50,
             ),
-            const SizedBox(height: 20),
-            Text(
-              'Общая посещаемость: $_attendance%',
-              style: textTheme.bodyLarge
-                  ?.copyWith(color: colorScheme.secondary, fontSize: 18),
+            progressIndicatorBuilder: (context, url, progress) =>
+            const CircularProgressIndicator(),
+            errorWidget: (context, url, error) => const Icon(
+              Icons.error,
+              color: Colors.red,
+              size: 60,
             ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+          ),
+          const SizedBox(height: 20),
+          Text(
+            'Общая посещаемость: $_attendance%',
+            style: textTheme.bodyLarge?.copyWith(
+              color: colorScheme.secondary,
+              fontSize: 18,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: _increaseAttendance,
+                child: const Text('Увеличить'),
+              ),
+              const SizedBox(width: 10),
+              ElevatedButton(
+                onPressed: _decreaseAttendance,
+                child: const Text('Уменьшить'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          TextField(
+            controller: _subjectController,
+            decoration: InputDecoration(
+              border: const OutlineInputBorder(),
+              labelText: 'Название предмета',
+              labelStyle: TextStyle(color: colorScheme.onSurface),
+            ),
+          ),
+          const SizedBox(height: 10),
+          TextField(
+            controller: _percentController,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+              border: const OutlineInputBorder(),
+              labelText: 'Процент посещаемости',
+              labelStyle: TextStyle(color: colorScheme.onSurface),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: _addSubject,
+                child: const Text('Добавить'),
+              ),
+              const SizedBox(width: 10),
+              ElevatedButton(
+                onPressed: _removeFirstSubject,
+                child: const Text('Удалить первый'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          ..._subjects.map(
+                (subject) => Column(
               children: [
-                ElevatedButton(onPressed: _increaseAttendance, child: const Text('Увеличить')),
-                const SizedBox(width: 10),
-                ElevatedButton(onPressed: _decreaseAttendance, child: const Text('Уменьшить')),
-              ],
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              controller: _subjectController,
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                labelText: 'Название предмета',
-                labelStyle: TextStyle(color: colorScheme.onSurface),
-              ),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: _percentController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                labelText: 'Процент посещаемости',
-                labelStyle: TextStyle(color: colorScheme.onSurface),
-              ),
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(onPressed: _addSubject, child: const Text('Добавить')),
-                const SizedBox(width: 10),
-                ElevatedButton(onPressed: _removeFirstSubject, child: const Text('Удалить первый')),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Column(
-              children: _subjects
-                  .map(
-                    (subject) => Column(
-                  children: [
-                    ListTile(
-                      leading: Icon(Icons.book, color: colorScheme.primary),
-                      title: Text(subject['subject']),
-                      trailing: Text('${subject['percent']}%'),
-                    ),
-                    Divider(color: colorScheme.outline, height: 1),
-                  ],
+                ListTile(
+                  leading: Icon(Icons.book, color: colorScheme.primary),
+                  title: Text(subject['subject']),
+                  trailing: Text('${subject['percent']}%'),
                 ),
-              )
-                  .toList(),
+                Divider(color: colorScheme.outline, height: 1),
+              ],
             ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: _goBack,
-              child: const Text('Вернуться на предыдущий экран'),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

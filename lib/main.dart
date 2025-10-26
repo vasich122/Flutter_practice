@@ -1,5 +1,5 @@
+// lib/main.dart
 import 'package:flutter/material.dart';
-import 'features/course/screens/course_screen.dart';
 import 'features/attendance/screens/attendance_screen.dart';
 import 'features/grade/state/grades_container.dart';
 import 'features/academic/screens/academic_screen.dart';
@@ -17,140 +17,61 @@ class MyApp extends StatelessWidget {
       title: 'Личный кабинет студента',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Профиль студента'),
+      home: const MainScreen(initialIndex: 2),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
+class MainScreen extends StatelessWidget {
+  final int initialIndex;
 
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
+  const MainScreen({super.key, required this.initialIndex});
 
-class _MyHomePageState extends State<MyHomePage>
-    with SingleTickerProviderStateMixin {
-  final List<String> _statuses = [
-    'Студент активен',
-    'Студент на паре',
-    'Студент сдал работу',
-    'Студент отсутствует',
+  static const List<String> _titles = [
+    'Посещаемость',
+    'Оценки',
+    'Академия',
   ];
 
-  int _statusIndex = 0;
-  String _currentCourse = '3 курс';
-  int _attendance = 92;
-
-  late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+  static Widget _screenAt(int index) {
+    switch (index) {
+      case 0:
+        return const AttendanceScreen(currentAttendance: 92);
+      case 1:
+        return const GradesContainer();
+      case 2:
+        return const AcademicScreen(
+          currentCourse: '3 курс',
+          initialAttendance: 92,
+          averageGrade: 4.0,
+        );
+      default:
+        return const SizedBox();
+    }
   }
 
-  void _changeStatus() {
-    setState(() {
-      _statusIndex = (_statusIndex + 1) % _statuses.length;
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Текущий статус: ${_statuses[_statusIndex]}'),
-        duration: const Duration(seconds: 1),
-      ),
-    );
-  }
-
-  void _navigateWithPop(Widget screen) {
-    Navigator.push(
+  void _onItemTapped(BuildContext context, int index) {
+    Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
-        builder: (_) => Scaffold(
-          appBar: AppBar(
-            title: const Text('Навигация'),
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () => Navigator.pop(context),
-            ),
-          ),
-          body: screen,
-        ),
-      ),
+      MaterialPageRoute(builder: (_) => MainScreen(initialIndex: index)),
     );
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: const [
-            Tab(text: 'Успеваемость'),
-            Tab(text: 'Академ. инфо'),
-          ],
-        ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        physics: const NeverScrollableScrollPhysics(),
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: () => _navigateWithPop(
-                  AttendanceScreen(currentAttendance: _attendance),
-                ),
-                child: const Text('Посещаемость'),
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: () => _navigateWithPop(
-                  const GradesContainer(),
-                ),
-                child: const Text('Оценки'),
-              ),
-            ],
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: () => _navigateWithPop(
-                  AcademicScreen(
-                    currentCourse: _currentCourse,
-                    initialAttendance: _attendance,
-                    averageGrade: 4.0,
-                  ),
-                ),
-                child: const Text('Академическая информация'),
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: () => _navigateWithPop(
-                  CourseScreen(currentCourse: _currentCourse),
-                ),
-                child: const Text('Выбор курса'),
-              ),
-            ],
-          ),
+      appBar: AppBar(title: Text(_titles[initialIndex])),
+      body: _screenAt(initialIndex),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: initialIndex,
+        onTap: (index) => _onItemTapped(context, index),
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: 'Посещаемость'),
+          BottomNavigationBarItem(icon: Icon(Icons.grade), label: 'Оценки'),
+          BottomNavigationBarItem(icon: Icon(Icons.school), label: 'Академия'),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _changeStatus,
-        child: Text(_statuses[_statusIndex][0]),
       ),
     );
   }

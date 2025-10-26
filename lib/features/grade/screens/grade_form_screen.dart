@@ -1,15 +1,10 @@
+// lib/features/grade/screens/grade_form_screen.dart
 import 'package:flutter/material.dart';
 import '../models/grade_model.dart';
+import 'package:flutter/services.dart';
 
 class GradeFormScreen extends StatefulWidget {
-  final void Function(String subject, double grade) onSave;
-  final VoidCallback onCancel;
-
-  const GradeFormScreen({
-    super.key,
-    required this.onSave,
-    required this.onCancel,
-  });
+  const GradeFormScreen({super.key});
 
   @override
   State<GradeFormScreen> createState() => _GradeFormScreenState();
@@ -22,17 +17,42 @@ class _GradeFormScreenState extends State<GradeFormScreen> {
   void _submit() {
     final subject = _subjectController.text.trim();
     final gradeText = _gradeController.text.trim();
-    final grade = double.tryParse(gradeText);
-
-    if (subject.isNotEmpty && grade != null && grade >= 1.0 && grade <= 5.0) {
-      widget.onSave(subject, grade); // Сохраняем через контейнер
-      _subjectController.clear();
-      _gradeController.clear();
+    if (subject.isEmpty) {
+      _showError('Введите название предмета');
+      return;
     }
+
+    final grade = double.tryParse(gradeText);
+    if (grade == null || grade < 1.0 || grade > 5.0) {
+      _showError('Оценка должна быть от 1.0 до 5.0');
+      return;
+    }
+
+    final newGrade = GradeModel(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      subject: subject,
+      grade: grade,
+    );
+
+    Navigator.pop(context, newGrade);
   }
 
-  void _cancel() {
-    widget.onCancel(); // Вызываем метод контейнера для возврата к списку
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Theme.of(context).colorScheme.error,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _subjectController.dispose();
+    _gradeController.dispose();
+    super.dispose();
   }
 
   @override
@@ -44,34 +64,36 @@ class _GradeFormScreenState extends State<GradeFormScreen> {
         title: const Text('Добавить оценку'),
         backgroundColor: colorScheme.primary,
         foregroundColor: colorScheme.onPrimary,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: _cancel,
-        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             TextField(
               controller: _subjectController,
+              textCapitalization: TextCapitalization.words,
               decoration: InputDecoration(
                 border: const OutlineInputBorder(),
                 labelText: 'Название предмета',
                 labelStyle: TextStyle(color: colorScheme.onSurface),
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 16),
             TextField(
               controller: _gradeController,
-              keyboardType: TextInputType.number,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,1}')),
+              ],
               decoration: InputDecoration(
                 border: const OutlineInputBorder(),
-                labelText: 'Оценка (1.0 - 5.0)',
+                labelText: 'Оценка (1.0 – 5.0)',
                 labelStyle: TextStyle(color: colorScheme.onSurface),
+                helperText: 'Например: 4.5',
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             ElevatedButton(
               onPressed: _submit,
               child: const Text('Сохранить'),

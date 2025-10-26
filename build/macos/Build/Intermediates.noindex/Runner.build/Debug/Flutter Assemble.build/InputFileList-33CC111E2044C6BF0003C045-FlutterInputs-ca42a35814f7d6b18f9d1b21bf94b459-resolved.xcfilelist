@@ -148,6 +148,7 @@
 /Users/vasilijsovarenko/.pub-cache/hosted/pub.dev/flutter_cache_manager-3.4.1/lib/src/web/queue_item.dart
 /Users/vasilijsovarenko/.pub-cache/hosted/pub.dev/flutter_cache_manager-3.4.1/lib/src/web/web_helper.dart
 /Users/vasilijsovarenko/.pub-cache/hosted/pub.dev/flutter_lints-5.0.0/LICENSE
+/Users/vasilijsovarenko/.pub-cache/hosted/pub.dev/go_router-14.8.1/LICENSE
 /Users/vasilijsovarenko/.pub-cache/hosted/pub.dev/http-1.5.0/LICENSE
 /Users/vasilijsovarenko/.pub-cache/hosted/pub.dev/http-1.5.0/lib/http.dart
 /Users/vasilijsovarenko/.pub-cache/hosted/pub.dev/http-1.5.0/lib/src/abortable.dart
@@ -184,6 +185,7 @@
 /Users/vasilijsovarenko/.pub-cache/hosted/pub.dev/leak_tracker_flutter_testing-3.0.10/LICENSE
 /Users/vasilijsovarenko/.pub-cache/hosted/pub.dev/leak_tracker_testing-3.0.2/LICENSE
 /Users/vasilijsovarenko/.pub-cache/hosted/pub.dev/lints-5.1.1/LICENSE
+/Users/vasilijsovarenko/.pub-cache/hosted/pub.dev/logging-1.3.0/LICENSE
 /Users/vasilijsovarenko/.pub-cache/hosted/pub.dev/matcher-0.12.17/LICENSE
 /Users/vasilijsovarenko/.pub-cache/hosted/pub.dev/material_color_utilities-0.11.1/LICENSE
 /Users/vasilijsovarenko/.pub-cache/hosted/pub.dev/material_color_utilities-0.11.1/lib/blend/blend.dart
@@ -535,8 +537,6 @@
 /Users/vasilijsovarenko/AndroidStudioProjects/Pr1/lib/features/grade/screens/grade_form_screen.dart
 /Users/vasilijsovarenko/AndroidStudioProjects/Pr1/lib/features/grade/screens/grade_screen.dart
 /Users/vasilijsovarenko/AndroidStudioProjects/Pr1/lib/features/grade/state/grades_container.dart
-/Users/vasilijsovarenko/AndroidStudioProjects/Pr1/lib/features/grade/widgets/grade_row.dart
-/Users/vasilijsovarenko/AndroidStudioProjects/Pr1/lib/features/grade/widgets/grade_table.dart
 /Users/vasilijsovarenko/AndroidStudioProjects/Pr1/lib/main.dart
 /Users/vasilijsovarenko/AndroidStudioProjects/Pr1/pubspec.yaml
 /Users/vasilijsovarenko/Downloads/flutter/bin/cache/artifacts/material_fonts/MaterialIcons-Regular.otf

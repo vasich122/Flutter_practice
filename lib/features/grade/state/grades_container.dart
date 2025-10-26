@@ -1,9 +1,8 @@
+// lib/features/grade/state/grades_container.dart
 import 'package:flutter/material.dart';
 import '../models/grade_model.dart';
 import '../screens/grade_screen.dart';
-import '../screens/grade_form_screen.dart';
-
-enum GradesScreen { list, form }
+// Убираем импорт grade_form_screen — он вызывается через Navigator
 
 class GradesContainer extends StatefulWidget {
   const GradesContainer({super.key});
@@ -13,36 +12,16 @@ class GradesContainer extends StatefulWidget {
 }
 
 class _GradesContainerState extends State<GradesContainer> {
-  GradesScreen _currentScreen = GradesScreen.list;
   final List<GradeModel> _grades = [];
   double _averageGrade = 0;
 
   GradeModel? _recentlyDeleted;
   int? _recentlyDeletedIndex;
 
-  void _showForm() {
+  void _addGrade(GradeModel grade) {
     setState(() {
-      _currentScreen = GradesScreen.form;
-    });
-  }
-
-  void _showList() {
-    setState(() {
-      _currentScreen = GradesScreen.list;
-    });
-  }
-
-  void _addGrade(String subject, double grade) {
-    final newGrade = GradeModel(
-      id: DateTime.now().microsecondsSinceEpoch.toString(),
-      subject: subject,
-      grade: grade,
-    );
-
-    setState(() {
-      _grades.add(newGrade);
+      _grades.add(grade);
       _calculateAverage();
-      _currentScreen = GradesScreen.list;
     });
   }
 
@@ -87,23 +66,11 @@ class _GradesContainerState extends State<GradesContainer> {
 
   @override
   Widget build(BuildContext context) {
-    Widget body = _currentScreen == GradesScreen.list
-        ? GradeScreen(
+    return GradeScreen(
       grades: _grades,
       averageGrade: _averageGrade,
-      onAddTap: _showForm,
+      onGradeAdded: _addGrade,     // теперь принимает GradeModel
       onRemove: _removeGrade,
-    )
-        : GradeFormScreen(
-      onSave: _addGrade,
-      onCancel: _showList,
-    );
-
-    return Scaffold(
-      body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300),
-        child: body,
-      ),
     );
   }
 }

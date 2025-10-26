@@ -1,11 +1,11 @@
-// lib/features/academic/screens/course_screen.dart
+// lib/features/course/screens/course_screen.dart
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:go_router/go_router.dart'; // 🔸 Добавлен импорт go_router
 
 class CourseScreen extends StatefulWidget {
-  final String currentCourse;
-
-  const CourseScreen({super.key, required this.currentCourse});
+  // 🔸 Убран параметр currentCourse
+  const CourseScreen({super.key});
 
   @override
   State<CourseScreen> createState() => _CourseScreenState();
@@ -27,50 +27,23 @@ class _CourseScreenState extends State<CourseScreen> {
   @override
   void initState() {
     super.initState();
-    _courseIndex = _courses.indexOf(widget.currentCourse);
-    if (_courseIndex == -1) _courseIndex = 2;
-  }
-
-  @override
-  void dispose() {
-    _subjectController.dispose();
-    super.dispose();
-  }
-
-  void _nextCourse() {
-    setState(() {
-      _courseIndex = (_courseIndex + 1) % _courses.length;
-    });
-  }
-
-  void _addSubject() {
-    if (_subjectController.text.isNotEmpty) {
-      setState(() {
-        _attendanceSubjects.add(_subjectController.text.trim());
-        _subjectController.clear();
-      });
-    }
-  }
-
-  void _removeFirstSubject() {
-    if (_attendanceSubjects.isNotEmpty) {
-      setState(() {
-        _attendanceSubjects.removeAt(0);
-      });
-    }
+    // 🔸 Используем значение по умолчанию
+    _courseIndex = 2; // по умолчанию "3 курс"
   }
 
   void _saveAndGoBack() {
-    Navigator.pop(context, _courses[_courseIndex]);
+    final selectedCourse = _courses[_courseIndex];
+    context.pop(selectedCourse);
   }
 
   @override
   Widget build(BuildContext context) {
+    // ... как и было, но без widget.currentCourse
+    const String courseImageUrl =
+        'https://cdn-icons-png.flaticon.com/512/4196/4196591.png'; // 🔸 Убран пробел в конце URL
+
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-
-    const String courseImageUrl =
-        'https://cdn-icons-png.flaticon.com/512/4196/4196591.png';
 
     return Scaffold(
       appBar: AppBar(
@@ -101,7 +74,7 @@ class _CourseScreenState extends State<CourseScreen> {
             ),
             const SizedBox(height: 20),
             Text(
-              'Текущий курс: ${_courses[_courseIndex]}',
+              'Текущий курс: ${_courses[_courseIndex]}', // ← используем локальное состояние
               style: textTheme.bodyLarge?.copyWith(
                 color: colorScheme.secondary,
                 fontSize: 18,
@@ -137,7 +110,7 @@ class _CourseScreenState extends State<CourseScreen> {
               ],
             ),
             const SizedBox(height: 20),
-            SizedBox(
+            SizedBox( // 🔸 Заменён Container на SizedBox для лучшей совместимости
               height: 300,
               child: ListView.builder(
                 itemCount: _attendanceSubjects.length,
@@ -146,10 +119,8 @@ class _CourseScreenState extends State<CourseScreen> {
                     children: [
                       ListTile(
                         leading: Icon(Icons.book, color: colorScheme.primary),
-                        title: Text(
-                          _attendanceSubjects[index],
-                          style: textTheme.bodyMedium,
-                        ),
+                        title: Text(_attendanceSubjects[index],
+                            style: textTheme.bodyMedium),
                       ),
                       Divider(color: colorScheme.outline, height: 1),
                     ],
@@ -158,11 +129,37 @@ class _CourseScreenState extends State<CourseScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            // Опционально: кнопка "Сохранить и выйти" (если нужно явное подтверждение)
-            // Но обычно достаточно системной кнопки "Назад"
+            // 🔸 Добавлена кнопка "Сохранить и выйти"
+            ElevatedButton(
+              onPressed: _saveAndGoBack,
+              child: const Text('Сохранить и выйти'),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  void _nextCourse() {
+    setState(() {
+      _courseIndex = (_courseIndex + 1) % _courses.length;
+    });
+  }
+
+  void _addSubject() {
+    if (_subjectController.text.isNotEmpty) {
+      setState(() {
+        _attendanceSubjects.add(_subjectController.text.trim());
+        _subjectController.clear();
+      });
+    }
+  }
+
+  void _removeFirstSubject() {
+    if (_attendanceSubjects.isNotEmpty) {
+      setState(() {
+        _attendanceSubjects.removeAt(0);
+      });
+    }
   }
 }

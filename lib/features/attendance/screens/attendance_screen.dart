@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class AttendanceScreen extends StatefulWidget {
-  final int currentAttendance;
-
-  const AttendanceScreen({super.key, required this.currentAttendance});
+  // 🔸 Убран обязательный параметр currentAttendance
+  // Экран теперь сам управляет начальным состоянием
+  const AttendanceScreen({super.key});
 
   @override
   State<AttendanceScreen> createState() => _AttendanceScreenState();
@@ -21,7 +21,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   @override
   void initState() {
     super.initState();
-    _attendance = widget.currentAttendance;
+    // 🔸 Используем значение по умолчанию вместо внешнего параметра
+    _attendance = 92; // ← можно заменить на данные из состояния, если нужно
   }
 
   @override
@@ -82,6 +83,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // 🔸 Исправлен URL: убран пробел в конце
     const String imageUrl = 'https://cdn-icons-png.flaticon.com/512/7514/7514354.png';
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;

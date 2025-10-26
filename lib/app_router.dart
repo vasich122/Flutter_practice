@@ -1,9 +1,13 @@
+// lib/app_router.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'features/attendance/screens/attendance_screen.dart';
 import 'features/grade/state/grades_container.dart';
 import 'features/academic/screens/academic_screen.dart';
+import 'features/grade/screens/grade_form_screen.dart'; // ← импортируем форму
+import 'features/course/screens/course_screen.dart'; // ← импортируем курс, если нужно
 
+// Общий экран с нижней панелью и переключением вкладок
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
@@ -20,6 +24,7 @@ class _MainScreenState extends State<MainScreen> {
     setState(() {
       _currentIndex = index;
     });
+    // 🔸 Горизонтальная навигация через go (аналог pushReplacement)
     context.go(_paths[index]);
   }
 
@@ -31,7 +36,7 @@ class _MainScreenState extends State<MainScreen> {
         child = const AcademicScreen();
         break;
       case 1:
-        child = const GradesContainer();
+        child = const GradesContainer(); // ← внутри будет кнопка, вызывающая /grades/form
         break;
       case 2:
         child = const AttendanceScreen();
@@ -67,12 +72,30 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) => NoTransitionPage(
         child: const MainScreen(),
       ),
+      routes: [
+        // 🔸 Вложенный маршрут: /academic/course
+        GoRoute(
+          path: 'course',
+          pageBuilder: (context, state) => NoTransitionPage(
+            child: const CourseScreen(), // ← убедитесь, что этот файл существует
+          ),
+        ),
+      ],
     ),
     GoRoute(
       path: '/grades',
       pageBuilder: (context, state) => NoTransitionPage(
         child: const MainScreen(),
       ),
+      routes: [
+        // 🔸 Вложенный маршрут: /grades/form
+        GoRoute(
+          path: 'form',
+          pageBuilder: (context, state) => NoTransitionPage(
+            child: const GradeFormScreen(), // ← убедитесь, что этот файл существует
+          ),
+        ),
+      ],
     ),
     GoRoute(
       path: '/attendance',

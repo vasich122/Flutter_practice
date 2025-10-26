@@ -69,8 +69,7 @@ class _GradesContainerState extends State<GradesContainer> {
     return GradeScreen(
       grades: _grades,
       averageGrade: _averageGrade,
-      onGradeAdded: _addGrade,     // теперь принимает GradeModel
-      onRemove: _removeGrade,
+
     );
   }
 }

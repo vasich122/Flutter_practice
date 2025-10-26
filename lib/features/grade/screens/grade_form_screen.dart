@@ -1,6 +1,7 @@
 // lib/features/grade/screens/grade_form_screen.dart
 import 'package:flutter/material.dart';
 import '../models/grade_model.dart';
+import 'package:go_router/go_router.dart'; // ← Добавлен импорт go_router
 import 'package:flutter/services.dart';
 
 class GradeFormScreen extends StatefulWidget {
@@ -34,7 +35,7 @@ class _GradeFormScreenState extends State<GradeFormScreen> {
       grade: grade,
     );
 
-    Navigator.pop(context, newGrade);
+    context.pop(newGrade);
   }
 
   void _showError(String message) {

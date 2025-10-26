@@ -1,20 +1,15 @@
-// lib/features/grade/screens/grade_screen.dart
 import 'package:flutter/material.dart';
 import '../models/grade_model.dart';
-import 'grade_form_screen.dart';
+import 'package:go_router/go_router.dart';
 
 class GradeScreen extends StatelessWidget {
   final List<GradeModel> grades;
   final double averageGrade;
-  final ValueChanged<GradeModel> onGradeAdded;
-  final ValueChanged<String> onRemove;
 
   const GradeScreen({
     super.key,
     required this.grades,
     required this.averageGrade,
-    required this.onGradeAdded,
-    required this.onRemove,
   });
 
   @override
@@ -43,15 +38,10 @@ class GradeScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
+
           ElevatedButton(
-            onPressed: () async {
-              final GradeModel? newGrade = await Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const GradeFormScreen()),
-              );
-              if (newGrade != null) {
-                onGradeAdded(newGrade);
-              }
+            onPressed: () {
+              context.push('/grades/form');
             },
             child: const Text('Добавить предмет'),
           ),
@@ -68,7 +58,9 @@ class GradeScreen extends StatelessWidget {
                   title: Text('${grade.subject} - ${grade.grade}'),
                   trailing: IconButton(
                     icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () => onRemove(grade.id),
+                    onPressed: () {
+
+                    },
                   ),
                 );
               },

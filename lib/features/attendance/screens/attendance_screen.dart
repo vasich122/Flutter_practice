@@ -1,8 +1,7 @@
 // lib/features/attendance/screens/attendance_screen.dart
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-// 🔸 Импортируем наш InheritedWidget
-import '../../../shared/app_state.dart';
+import '../../../shared/service_locator.dart';
 
 class AttendanceScreen extends StatefulWidget {
   const AttendanceScreen({super.key});
@@ -12,7 +11,6 @@ class AttendanceScreen extends StatefulWidget {
 }
 
 class _AttendanceScreenState extends State<AttendanceScreen> {
-  // 🔸 Убрано: late int _attendance;
   final List<Map<String, dynamic>> _subjects = [];
 
   final TextEditingController _subjectController = TextEditingController();
@@ -29,16 +27,16 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     // setState(() {
     //   if (_attendance < 100) _attendance++;
     // });
-    // Для демонстрации InheritedWidget оставим как есть (локальное изменение)
-    // или добавим логику обновления AppState (см. ниже).
+    // Для демонстрации GetIt оставим как есть (локальное изменение)
+    // или добавим логику обновления AppStateService (см. ниже).
   }
 
   void _decreaseAttendance() {
     // setState(() {
     //   if (_attendance > 0) _attendance--;
     // });
-    // Для демонстрации InheritedWidget оставим как есть (локальное изменение)
-    // или добавим логику обновления AppState (см. ниже).
+    // Для демонстрации GetIt оставим как есть (локальное изменение)
+    // или добавим логику обновления AppStateService (см. ниже).
   }
 
   void _addSubject() {
@@ -80,8 +78,13 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final appState = AppState.of(context);
-    final attendance = appState.attendance;
+    String attendanceText = 'Посещаемость: неизвестна';
+    if (locator.isRegistered<AppStateService>()) {
+      final appStateService = locator.get<AppStateService>();
+      attendanceText = 'Посещаемость: ${appStateService.attendance}%';
+    } else {
+      print('Ошибка: AppStateService не зарегистрирован в GetIt!');
+    }
 
     const String imageUrl = 'https://cdn-icons-png.flaticon.com/512/7514/7514354.png';
     final colorScheme = Theme.of(context).colorScheme;
@@ -109,7 +112,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
           ),
           const SizedBox(height: 20),
           Text(
-            'Общая посещаемость: $attendance%',
+            attendanceText,
             style: textTheme.bodyLarge?.copyWith(
               color: colorScheme.secondary,
               fontSize: 18,

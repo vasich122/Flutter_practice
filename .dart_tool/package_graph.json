@@ -55,6 +55,15 @@
       ]
     },
     {
+      "name": "get_it",
+      "version": "8.2.0",
+      "dependencies": [
+        "async",
+        "collection",
+        "meta"
+      ]
+    },
+    {
       "name": "cupertino_icons",
       "version": "1.0.8",
       "dependencies": []
@@ -184,6 +193,14 @@
       ]
     },
     {
+      "name": "async",
+      "version": "2.13.0",
+      "dependencies": [
+        "collection",
+        "meta"
+      ]
+    },
+    {
       "name": "sky_engine",
       "version": "0.0.0",
       "dependencies": []
@@ -239,14 +256,6 @@
       "dependencies": [
         "flutter",
         "flutter_cache_manager"
-      ]
-    },
-    {
-      "name": "async",
-      "version": "2.13.0",
-      "dependencies": [
-        "collection",
-        "meta"
       ]
     },
     {
@@ -514,15 +523,6 @@
       "dependencies": [
         "meta",
         "path"
-      ]
-    },
-    {
-      "name": "get_it",
-      "version": "8.2.0",
-      "dependencies": [
-        "async",
-        "collection",
-        "meta"
       ]
     }
   ],

@@ -11,6 +11,4 @@ class AppStateService {
 void setupLocator() {
   locator.registerSingleton<AppStateService>(AppStateService());
 }
-void main(List<String> args){
-  GetIt.I.registerFactory(()=> MyClass(), instanceName: 'my_class');
-}
+

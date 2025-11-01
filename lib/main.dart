@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'app_router.dart';
+import 'features/auth/autorization.dart';
+import 'shared/app_theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,13 +11,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: appRouter,
+    return MaterialApp(
       title: 'Личный кабинет студента',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
+      theme: AppTheme.light,
+      debugShowCheckedModeBanner: false,
+      home: const AutorizationScreen(),
     );
   }
 }

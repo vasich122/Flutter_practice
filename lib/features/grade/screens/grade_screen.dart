@@ -1,72 +1,85 @@
 import 'package:flutter/material.dart';
+
 import '../models/grade_model.dart';
-import 'package:go_router/go_router.dart';
 
 class GradeScreen extends StatelessWidget {
-  final List<GradeModel> grades;
-  final double averageGrade;
+  const GradeScreen({super.key});
 
-  const GradeScreen({
-    super.key,
-    required this.grades,
-    required this.averageGrade,
-  });
+  static final List<GradeModel> _grades = [
+    GradeModel(id: 'g1', subject: 'Математический анализ', grade: 4.7),
+    GradeModel(id: 'g2', subject: 'Алгоритмы и структуры данных', grade: 4.9),
+    GradeModel(id: 'g3', subject: 'Базы данных', grade: 4.6),
+    GradeModel(id: 'g4', subject: 'Проектирование ПО', grade: 4.8),
+    GradeModel(id: 'g5', subject: 'Машинное обучение', grade: 4.5),
+  ];
+
+  double get _averageGrade {
+    if (_grades.isEmpty) {
+      return 0;
+    }
+    final total = _grades.fold<double>(0, (sum, grade) => sum + grade.grade);
+    return total / _grades.length;
+  }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
+    final average = _averageGrade;
 
-    const String gradeImageUrl =
-        'https://img.icons8.com/?size=1200&id=uAfcxibacUgO&format=jpg';
-
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          const SizedBox(height: 20),
-          CircleAvatar(
-            radius: 60,
-            backgroundImage: NetworkImage(gradeImageUrl),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            'Средний балл: ${averageGrade.toStringAsFixed(1)}',
-            style: textTheme.bodyLarge?.copyWith(
-              color: colorScheme.secondary,
-              fontSize: 18,
-            ),
-          ),
-          const SizedBox(height: 20),
-
-          ElevatedButton(
-            onPressed: () {
-              context.push('/grades/form');
-            },
-            child: const Text('Добавить предмет'),
-          ),
-          const SizedBox(height: 20),
-          SizedBox(
-            height: 300,
-            child: ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: grades.length,
-              itemBuilder: (context, index) {
-                final grade = grades[index];
-                return ListTile(
-                  title: Text('${grade.subject} - ${grade.grade}'),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () {
-
-                    },
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Оценки'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
+      body: ListView.separated(
+        padding: const EdgeInsets.all(16.0),
+        itemCount: _grades.length + 1,
+        separatorBuilder: (_, __) => const SizedBox(height: 12),
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return Card(
+              elevation: 0,
+              color: colorScheme.primaryContainer,
+              child: ListTile(
+                leading: Icon(
+                  Icons.assessment,
+                  color: colorScheme.onPrimaryContainer,
+                ),
+                title: Text(
+                  'Средний балл',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                subtitle: const Text('По результатам последней сессии'),
+                trailing: Text(
+                  average.toStringAsFixed(2),
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    color: colorScheme.onPrimaryContainer,
                   ),
-                );
-              },
+                ),
+              ),
+            );
+          }
+
+          final grade = _grades[index - 1];
+          return Card(
+            elevation: 0,
+            color: colorScheme.surfaceVariant,
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundColor: colorScheme.secondary,
+                child: Text(
+                  grade.grade.toStringAsFixed(1),
+                  style: TextStyle(color: colorScheme.onSecondary),
+                ),
+              ),
+              title: Text(grade.subject),
+              subtitle: const Text('Экзамен, преподаватель кафедры ИТ'),
             ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }

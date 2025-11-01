@@ -1,187 +1,93 @@
-// lib/features/attendance/screens/attendance_screen.dart
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import '../../../shared/service_locator.dart';
 
-class AttendanceScreen extends StatefulWidget {
+class AttendanceScreen extends StatelessWidget {
   const AttendanceScreen({super.key});
 
-  @override
-  State<AttendanceScreen> createState() => _AttendanceScreenState();
-}
-
-class _AttendanceScreenState extends State<AttendanceScreen> {
-  final List<Map<String, dynamic>> _subjects = [];
-
-  final TextEditingController _subjectController = TextEditingController();
-  final TextEditingController _percentController = TextEditingController();
-
-  @override
-  void dispose() {
-    _subjectController.dispose();
-    _percentController.dispose();
-    super.dispose();
-  }
-
-  void _increaseAttendance() {
-    // setState(() {
-    //   if (_attendance < 100) _attendance++;
-    // });
-    // Для демонстрации GetIt оставим как есть (локальное изменение)
-    // или добавим логику обновления AppStateService (см. ниже).
-  }
-
-  void _decreaseAttendance() {
-    // setState(() {
-    //   if (_attendance > 0) _attendance--;
-    // });
-    // Для демонстрации GetIt оставим как есть (локальное изменение)
-    // или добавим логику обновления AppStateService (см. ниже).
-  }
-
-  void _addSubject() {
-    final subject = _subjectController.text.trim();
-    final percentText = _percentController.text.trim();
-    if (subject.isNotEmpty && percentText.isNotEmpty) {
-      final percent = int.tryParse(percentText);
-      if (percent != null && percent >= 0 && percent <= 100) {
-        setState(() {
-          _subjects.add({'subject': subject, 'percent': percent});
-          _subjectController.clear();
-          _percentController.clear();
-        });
-      } else {
-        _showError('Процент должен быть от 0 до 100');
-      }
-    } else {
-      _showError('Заполните все поля');
-    }
-  }
-
-  void _removeFirstSubject() {
-    if (_subjects.isNotEmpty) {
-      setState(() {
-        _subjects.removeAt(0);
-      });
-    }
-  }
-
-  void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Theme.of(context).colorScheme.error,
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
+  static final List<_AttendanceRecord> _records = [
+    const _AttendanceRecord(
+      subject: 'Математический анализ',
+      lecturer: 'Петров Н.Н.',
+      attendance: 96,
+      missed: 1,
+    ),
+    const _AttendanceRecord(
+      subject: 'Алгоритмы и структуры данных',
+      lecturer: 'Иванова Л.С.',
+      attendance: 92,
+      missed: 2,
+    ),
+    const _AttendanceRecord(
+      subject: 'Базы данных',
+      lecturer: 'Соколов Д.В.',
+      attendance: 88,
+      missed: 3,
+    ),
+    const _AttendanceRecord(
+      subject: 'Проектирование UI/UX',
+      lecturer: 'Громова Е.А.',
+      attendance: 100,
+      missed: 0,
+    ),
+    const _AttendanceRecord(
+      subject: 'Машинное обучение',
+      lecturer: 'Козлов А.И.',
+      attendance: 85,
+      missed: 4,
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    String attendanceText = 'Посещаемость: неизвестна';
-    if (locator.isRegistered<AppStateService>()) {
-      final appStateService = locator.get<AppStateService>();
-      attendanceText = 'Посещаемость: ${appStateService.attendance}%';
-    } else {
-      print('Ошибка: AppStateService не зарегистрирован в GetIt!');
-    }
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Посещаемость'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
+      body: ListView.separated(
+        padding: const EdgeInsets.all(16.0),
+        itemCount: _records.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 12),
+        itemBuilder: (context, index) {
+          final record = _records[index];
+          final colorScheme = Theme.of(context).colorScheme;
 
-    const String imageUrl = 'https://cdn-icons-png.flaticon.com/512/7514/7514354.png';
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          CachedNetworkImage(
-            imageUrl: imageUrl,
-            height: 100,
-            width: 100,
-            imageBuilder: (context, imageProvider) => CircleAvatar(
-              backgroundImage: imageProvider,
-              radius: 50,
-            ),
-            progressIndicatorBuilder: (context, url, progress) =>
-            const CircularProgressIndicator(),
-            errorWidget: (context, url, error) => const Icon(
-              Icons.error,
-              color: Colors.red,
-              size: 60,
-            ),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            attendanceText,
-            style: textTheme.bodyLarge?.copyWith(
-              color: colorScheme.secondary,
-              fontSize: 18,
-            ),
-          ),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: _increaseAttendance,
-                child: const Text('Увеличить'),
-              ),
-              const SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: _decreaseAttendance,
-                child: const Text('Уменьшить'),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          TextField(
-            controller: _subjectController,
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              labelText: 'Название предмета',
-              labelStyle: TextStyle(color: colorScheme.onSurface),
-            ),
-          ),
-          const SizedBox(height: 10),
-          TextField(
-            controller: _percentController,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              labelText: 'Процент посещаемости',
-              labelStyle: TextStyle(color: colorScheme.onSurface),
-            ),
-          ),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: _addSubject,
-                child: const Text('Добавить'),
-              ),
-              const SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: _removeFirstSubject,
-                child: const Text('Удалить первый'),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          ..._subjects.map(
-                (subject) => Column(
-              children: [
-                ListTile(
-                  leading: Icon(Icons.book, color: colorScheme.primary),
-                  title: Text(subject['subject']),
-                  trailing: Text('${subject['percent']}%'),
+          return Card(
+            elevation: 0,
+            color: colorScheme.surfaceVariant,
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundColor: colorScheme.primary,
+                child: Text(
+                  record.attendance.toString(),
+                  style: TextStyle(color: colorScheme.onPrimary),
                 ),
-                Divider(color: colorScheme.outline, height: 1),
-              ],
+              ),
+              title: Text(record.subject),
+              subtitle: Text(
+                'Преподаватель: ${record.lecturer}\nПропущено занятий: ${record.missed}',
+              ),
+              trailing: Text('${record.attendance}%'),
             ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
+}
+
+class _AttendanceRecord {
+  const _AttendanceRecord({
+    required this.subject,
+    required this.lecturer,
+    required this.attendance,
+    required this.missed,
+  });
+
+  final String subject;
+  final String lecturer;
+  final int attendance;
+  final int missed;
 }

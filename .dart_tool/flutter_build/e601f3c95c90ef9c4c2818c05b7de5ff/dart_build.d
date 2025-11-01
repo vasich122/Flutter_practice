@@ -1,0 +1,1 @@
+ /Users/vasilijsovarenko/AndroidStudioProjects/Pr1/.dart_tool/flutter_build/e601f3c95c90ef9c4c2818c05b7de5ff/dart_build_result.json: 

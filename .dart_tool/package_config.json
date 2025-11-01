@@ -116,6 +116,12 @@
       "languageVersion": "3.8"
     },
     {
+      "name": "get_it",
+      "rootUri": "file:///Users/vasilijsovarenko/.pub-cache/hosted/pub.dev/get_it-8.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "go_router",
       "rootUri": "file:///Users/vasilijsovarenko/.pub-cache/hosted/pub.dev/go_router-14.8.1",
       "packageUri": "lib/",

@@ -1,10 +1,10 @@
 // lib/features/attendance/screens/attendance_screen.dart
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+// 🔸 Импортируем наш InheritedWidget
+import '../../../shared/app_state.dart';
 
 class AttendanceScreen extends StatefulWidget {
-  // 🔸 Убран обязательный параметр currentAttendance
-  // Экран теперь сам управляет начальным состоянием
   const AttendanceScreen({super.key});
 
   @override
@@ -12,18 +12,11 @@ class AttendanceScreen extends StatefulWidget {
 }
 
 class _AttendanceScreenState extends State<AttendanceScreen> {
-  late int _attendance;
+  // 🔸 Убрано: late int _attendance;
   final List<Map<String, dynamic>> _subjects = [];
 
   final TextEditingController _subjectController = TextEditingController();
   final TextEditingController _percentController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    // 🔸 Используем значение по умолчанию вместо внешнего параметра
-    _attendance = 92; // ← можно заменить на данные из состояния, если нужно
-  }
 
   @override
   void dispose() {
@@ -33,15 +26,19 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   }
 
   void _increaseAttendance() {
-    setState(() {
-      if (_attendance < 100) _attendance++;
-    });
+    // setState(() {
+    //   if (_attendance < 100) _attendance++;
+    // });
+    // Для демонстрации InheritedWidget оставим как есть (локальное изменение)
+    // или добавим логику обновления AppState (см. ниже).
   }
 
   void _decreaseAttendance() {
-    setState(() {
-      if (_attendance > 0) _attendance--;
-    });
+    // setState(() {
+    //   if (_attendance > 0) _attendance--;
+    // });
+    // Для демонстрации InheritedWidget оставим как есть (локальное изменение)
+    // или добавим логику обновления AppState (см. ниже).
   }
 
   void _addSubject() {
@@ -83,7 +80,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // 🔸 Исправлен URL: убран пробел в конце
+    final appState = AppState.of(context);
+    final attendance = appState.attendance;
+
     const String imageUrl = 'https://cdn-icons-png.flaticon.com/512/7514/7514354.png';
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
@@ -110,7 +109,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
           ),
           const SizedBox(height: 20),
           Text(
-            'Общая посещаемость: $_attendance%',
+            'Общая посещаемость: $attendance%',
             style: textTheme.bodyLarge?.copyWith(
               color: colorScheme.secondary,
               fontSize: 18,

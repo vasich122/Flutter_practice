@@ -61,7 +61,7 @@ class AcademicScreen extends StatelessWidget {
           final item = _items[index];
           return Card(
             elevation: 0,
-            color: Theme.of(context).colorScheme.surfaceVariant,
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
             child: ListTile(
               leading: Icon(
                 item.icon,

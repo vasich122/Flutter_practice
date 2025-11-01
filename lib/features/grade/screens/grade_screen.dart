@@ -66,7 +66,7 @@ class GradeScreen extends StatelessWidget {
           final grade = _grades[index - 1];
           return Card(
             elevation: 0,
-            color: colorScheme.surfaceVariant,
+            color: colorScheme.surfaceContainerHighest,
             child: ListTile(
               leading: CircleAvatar(
                 backgroundColor: colorScheme.secondary,

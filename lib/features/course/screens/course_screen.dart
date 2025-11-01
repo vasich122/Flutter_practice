@@ -66,7 +66,7 @@ class CourseScreen extends StatelessWidget {
           final course = _courses[index];
           return Card(
             elevation: 0,
-            color: colorScheme.surfaceVariant,
+            color: colorScheme.surfaceContainerHighest,
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(

@@ -150,7 +150,7 @@ class _MainScreenContent extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => const CourseScreen()),
               ),
               icon: const Icon(Icons.book_outlined),
-              label: const Text('Экран выбора курса'),
+              label: const Text('Экран просмотра курсов'),
             ),
             const SizedBox(height: 8),
             ElevatedButton.icon(

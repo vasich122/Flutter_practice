@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../academic/screens/academic_screen.dart';
 import '../../attendance/screens/attendance_screen.dart';
 import '../../auth/autorization.dart';
+import '../../auth/cubit/auth_cubit.dart';
 import '../../course/screens/course_screen.dart';
 import '../../grade/state/grades_container.dart';
 
@@ -17,9 +19,12 @@ class MainScreen extends StatelessWidget {
           IconButton(
             tooltip: 'Выход',
             icon: const Icon(Icons.logout),
-            onPressed: () => Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => const AutorizationScreen()),
-            ),
+            onPressed: () {
+              context.read<AuthCubit>().logout();
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (_) => const AutorizationScreen()),
+              );
+            },
           ),
         ],
       ),
@@ -36,12 +41,10 @@ class MainScreen extends StatelessWidget {
               icon: const Icon(Icons.school),
               label: const Text('Академический экран'),
             ),
-            const SizedBox(height: 8), // Отступ между кнопками
+            const SizedBox(height: 8),
             ElevatedButton.icon(
               onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const AttendanceScreen(),
-                ),
+                MaterialPageRoute(builder: (context) => const AttendanceScreen()),
               ),
               icon: const Icon(Icons.calendar_today),
               label: const Text('Экран посещаемости'),
@@ -57,9 +60,7 @@ class MainScreen extends StatelessWidget {
             const SizedBox(height: 8),
             ElevatedButton.icon(
               onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const GradesContainer(),
-                ),
+                MaterialPageRoute(builder: (context) => const GradesContainer()),
               ),
               icon: const Icon(Icons.grade),
               label: const Text('Экран оценок'),

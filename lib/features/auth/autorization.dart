@@ -1,39 +1,29 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../auth/cubit/auth_cubit.dart';
 import '../main/screens/main_screen.dart';
 
-class AutorizationScreen extends StatefulWidget {
+class AutorizationScreen extends StatelessWidget {
   const AutorizationScreen({super.key});
 
   @override
-  State<AutorizationScreen> createState() => _AutorizationScreenState();
-}
+  Widget build(BuildContext context) {
+    final _formKey = GlobalKey<FormState>();
+    final _loginController = TextEditingController();
+    final _passwordController = TextEditingController();
+    bool _isPasswordVisible = false;
 
-class _AutorizationScreenState extends State<AutorizationScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _loginController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _isPasswordVisible = false;
+    void _handleLogin() {
+      if (!_formKey.currentState!.validate()) return;
 
-  @override
-  void dispose() {
-    _loginController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
+      final login = _loginController.text.trim();
+      context.read<AuthCubit>().login(login);
 
-  void _handleLogin() {
-    if (!_formKey.currentState!.validate()) {
-      return;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute<void>(builder: (context) => const MainScreen()),
+      );
     }
 
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute<void>(builder: (context) => const MainScreen()),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Авторизация')),
       body: Padding(
@@ -70,9 +60,6 @@ class _AutorizationScreenState extends State<AutorizationScreen> {
                           : Icons.visibility,
                     ),
                     onPressed: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
                     },
                   ),
                 ),

@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart'; // ← добавьте этот импорт
 import 'features/auth/autorization.dart';
+import 'features/auth/cubit/auth_cubit.dart'; // ← добавьте этот импорт
 import 'shared/app_theme.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    BlocProvider(
+      create: (context) => AuthCubit(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

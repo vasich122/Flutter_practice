@@ -3,27 +3,45 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../auth/cubit/auth_cubit.dart';
 import '../main/screens/main_screen.dart';
 
-class AutorizationScreen extends StatelessWidget {
+class AutorizationScreen extends StatefulWidget {
   const AutorizationScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final _formKey = GlobalKey<FormState>();
-    final _loginController = TextEditingController();
-    final _passwordController = TextEditingController();
-    bool _isPasswordVisible = false;
+  State<AutorizationScreen> createState() => _AutorizationScreenState();
+}
 
-    void _handleLogin() {
-      if (!_formKey.currentState!.validate()) return;
+class _AutorizationScreenState extends State<AutorizationScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _loginController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _isPasswordVisible = false;
 
-      final login = _loginController.text.trim();
-      context.read<AuthCubit>().login(login);
+  @override
+  void dispose() {
+    _loginController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute<void>(builder: (context) => const MainScreen()),
-      );
+  void _handleLogin() {
+    print("Попытка входа...");
+    if (!_formKey.currentState!.validate()) {
+      print("Валидация не пройдена");
+      return;
     }
+    print("Валидация пройдена, логин: ${_loginController.text}");
+    if (!_formKey.currentState!.validate()) return;
 
+    final login = _loginController.text.trim();
+    context.read<AuthCubit>().login(login);
+
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute<void>(builder: (context) => const MainScreen()),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Авторизация')),
       body: Padding(
@@ -60,6 +78,9 @@ class AutorizationScreen extends StatelessWidget {
                           : Icons.visibility,
                     ),
                     onPressed: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
                     },
                   ),
                 ),

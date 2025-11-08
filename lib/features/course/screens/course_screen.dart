@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../cubit/course_cubit.dart';
 
 class CourseScreen extends StatelessWidget {
   const CourseScreen({super.key});
@@ -48,6 +50,65 @@ class CourseScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => CourseCubit(),
+      child: const _CourseScreenContent(),
+    );
+  }
+}
+
+class _CourseScreenContent extends StatelessWidget {
+  const _CourseScreenContent({super.key});
+
+  void _showNoteDialog(BuildContext context, String subject) {
+    final cubit = context.read<CourseCubit>();
+    final currentNote = cubit.getNote(subject);
+    final controller = TextEditingController(text: currentNote);
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: Text('Критерии по "$subject"'),
+          content: TextField(
+            controller: controller,
+            maxLines: 4,
+            decoration: const InputDecoration(
+              hintText: 'Например: Автомат при посещаемости ≥90% и сдаче всех лаб',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Отмена'),
+            ),
+            OutlinedButton(
+              onPressed: () {
+                cubit.clearNote(subject);
+                Navigator.of(dialogContext).pop();
+              },
+              child: const Text('Очистить'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final note = controller.text.trim();
+                if (note.isNotEmpty) {
+                  cubit.setNote(subject, note);
+                } else {
+                  cubit.clearNote(subject);
+                }
+                Navigator.of(dialogContext).pop();
+              },
+              child: const Text('Сохранить'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
@@ -58,55 +119,80 @@ class CourseScreen extends StatelessWidget {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: ListView.separated(
-        padding: const EdgeInsets.all(16.0),
-        itemCount: _courses.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 16),
-        itemBuilder: (context, index) {
-          final course = _courses[index];
-          return Card(
-            elevation: 0,
-            color: colorScheme.surfaceContainerHighest,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: BlocBuilder<CourseCubit, Map<String, String>>(
+        builder: (context, notes) {
+          return ListView.separated(
+            padding: const EdgeInsets.all(16.0),
+            itemCount: CourseScreen._courses.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 16),
+            itemBuilder: (context, index) {
+              final course = CourseScreen._courses[index];
+              return Card(
+                elevation: 0,
+                color: colorScheme.surfaceContainerHighest,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        course.title,
-                        style: Theme.of(context).textTheme.titleMedium,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            course.title,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          Chip(
+                            label: Text('${course.modules.length} дисциплины'),
+                            backgroundColor:
+                            colorScheme.primary.withOpacity(0.15),
+                          ),
+                        ],
                       ),
-                      Chip(
-                        label: Text('${course.modules.length} дисциплины'),
-                        backgroundColor: colorScheme.primary.withOpacity(0.15),
+                      const SizedBox(height: 8),
+                      Text(
+                        course.description,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: course.modules.map((module) {
+                          final note = notes[module] ?? '';
+                          return Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              InkWell(
+                                onTap: () => _showNoteDialog(context, module),
+                                child: Chip(
+                                  backgroundColor: colorScheme
+                                      .secondaryContainer
+                                      .withOpacity(0.6),
+                                  label: Text(module),
+                                ),
+                              ),
+                              if (note.isNotEmpty) ...[
+                                const SizedBox(height: 4),
+                                Text(
+                                  'ℹ️ $note',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          );
+                        }).toList(),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    course.description,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: course.modules
-                        .map(
-                          (module) => Chip(
-                            backgroundColor: colorScheme.secondaryContainer
-                                .withOpacity(0.6),
-                            label: Text(module),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           );
         },
       ),

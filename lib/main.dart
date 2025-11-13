@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart'; // ← добавьте это�
 import 'features/auth/autorization.dart';
 import 'features/auth/cubit/auth_cubit.dart'; // ← добавьте этот импорт
 import 'shared/app_theme.dart';
+import 'bloc_observer.dart';
 
 void main() {
+  Bloc.observer = AppBlocObserver();
   runApp(
     BlocProvider(
       create: (context) => AuthCubit(),

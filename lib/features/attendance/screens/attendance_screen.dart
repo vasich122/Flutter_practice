@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../cubit/attendance_cubit.dart';
+import 'package:go_router/go_router.dart';
 
 class AttendanceScreen extends StatelessWidget {
   const AttendanceScreen({super.key});
@@ -70,13 +71,13 @@ class _AttendanceScreenContent extends StatelessWidget {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
+              onPressed: () => context.pop(), // через GoRouter
               child: const Text('Отмена'),
             ),
             OutlinedButton(
               onPressed: () {
                 cubit.clearClassroom(subject);
-                Navigator.of(dialogContext).pop();
+                context.pop(); // через GoRouter
               },
               child: const Text('Очистить'),
             ),
@@ -88,7 +89,7 @@ class _AttendanceScreenContent extends StatelessWidget {
                 } else {
                   cubit.clearClassroom(subject);
                 }
-                Navigator.of(dialogContext).pop();
+                context.pop(); // через GoRouter
               },
               child: const Text('Сохранить'),
             ),
@@ -107,7 +108,7 @@ class _AttendanceScreenContent extends StatelessWidget {
         title: const Text('Посещаемость'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => context.pop(), // переход назад через GoRouter
         ),
       ),
       body: BlocBuilder<AttendanceCubit, Map<String, String>>(

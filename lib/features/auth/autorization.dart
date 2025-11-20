@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../auth/cubit/auth_cubit.dart';
-import '../main/screens/main_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'cubit/auth_cubit.dart';
 
 class AutorizationScreen extends StatefulWidget {
   const AutorizationScreen({super.key});
@@ -24,20 +24,17 @@ class _AutorizationScreenState extends State<AutorizationScreen> {
   }
 
   void _handleLogin() {
-    print("Попытка входа...");
-    if (!_formKey.currentState!.validate()) {
-      print("Валидация не пройдена");
-      return;
-    }
-    print("Валидация пройдена, логин: ${_loginController.text}");
     if (!_formKey.currentState!.validate()) return;
 
-    final login = _loginController.text.trim();
-    context.read<AuthCubit>().login(login);
-
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute<void>(builder: (context) => const MainScreen()),
-    );
+    try {
+      final login = _loginController.text.trim();
+      context.read<AuthCubit>().login(login);
+      context.pushReplacement('/main');
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Ошибка: $e')),
+      );
+    }
   }
 
   @override
@@ -57,12 +54,8 @@ class _AutorizationScreenState extends State<AutorizationScreen> {
                   labelText: 'Логин',
                   border: OutlineInputBorder(),
                 ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Введите логин';
-                  }
-                  return null;
-                },
+                validator: (value) =>
+                value == null || value.trim().isEmpty ? 'Введите логин' : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -77,11 +70,8 @@ class _AutorizationScreenState extends State<AutorizationScreen> {
                           ? Icons.visibility_off
                           : Icons.visibility,
                     ),
-                    onPressed: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    },
+                    onPressed: () =>
+                        setState(() => _isPasswordVisible = !_isPasswordVisible),
                   ),
                 ),
                 validator: (value) {
@@ -89,7 +79,7 @@ class _AutorizationScreenState extends State<AutorizationScreen> {
                     return 'Введите пароль';
                   }
                   if (value.length < 4) {
-                    return 'Минимальная длина — 4 символа';
+                    return 'Минимум 4 символа';
                   }
                   return null;
                 },

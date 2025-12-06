@@ -57,25 +57,65 @@ class StudentHelpRepositoryImpl implements StudentHelpRepository {
     if (testId.contains('_')) {
       final parts = testId.split('_');
       if (parts.length >= 2) {
-        apiDifficulty = parts[1]; // easy, medium, hard
+        final extractedDifficulty = parts[1]; // easy, medium, hard или русский вариант
+        // Проверяем, это английский формат или русский
+        if (extractedDifficulty == 'easy' || 
+            extractedDifficulty == 'medium' || 
+            extractedDifficulty == 'hard') {
+          apiDifficulty = extractedDifficulty;
+        } else {
+          // Если извлеченная сложность на русском, используем переданную difficulty
+          apiDifficulty = difficulty;
+        }
       }
     }
     
     // Маппинг русской сложности в формат API
     switch (apiDifficulty.toLowerCase()) {
       case 'легкий':
+      case 'легк':
         apiDifficulty = 'easy';
         break;
       case 'средний':
+      case 'средн':
         apiDifficulty = 'medium';
         break;
       case 'сложный':
+      case 'сложн':
         apiDifficulty = 'hard';
         break;
+      // Если уже на английском, оставляем как есть
+      case 'easy':
+      case 'medium':
+      case 'hard':
+        // Уже правильный формат
+        break;
+      default:
+        // Если формат неизвестен, пробуем извлечь из testId еще раз
+        if (testId.contains('_')) {
+          final parts = testId.split('_');
+          if (parts.length >= 2) {
+            final extracted = parts[1].toLowerCase();
+            if (extracted == 'easy' || extracted == 'medium' || extracted == 'hard') {
+              apiDifficulty = extracted;
+            }
+          }
+        }
     }
 
+    print('📝 Repository: загрузка вопросов: testId=$testId, difficulty=$difficulty, apiDifficulty=$apiDifficulty');
     final questions = await _mathTestDataSource.getTestQuestions(apiDifficulty);
-    return questions.map((dto) => dto.toModel()).toList();
+    print('📝 Repository: загружено вопросов: ${questions.length}');
+    
+    if (questions.isEmpty) {
+      print('❌ Repository: вопросы не найдены для сложности: $apiDifficulty');
+      // Mock-данные должны всегда возвращать вопросы, но на всякий случай
+      throw Exception('Вопросы не найдены для теста. Попробуйте выбрать другой тест.');
+    }
+    
+    final models = questions.map((dto) => dto.toModel()).toList();
+    print('✅ Repository: преобразовано в модели: ${models.length}');
+    return models;
   }
 
   @override

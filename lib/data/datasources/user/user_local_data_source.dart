@@ -1,52 +1,41 @@
 import 'user_dto.dart';
+import '../core/preferences_helper.dart';
+import '../core/secure_storage_helper.dart';
 
-/// Локальный источник данных для пользователя
-/// Инкапсулирует работу с локальным хранилищем
 class UserLocalDataSource {
-  // В реальном приложении здесь будет работа с SharedPreferences, Hive, etc.
-  // Для демонстрации используем in-memory хранилище
-  UserDto? _cachedUser;
+  final PreferencesHelper _prefsHelper = PreferencesHelper.instance;
+  final SecureStorageHelper _secureStorage = SecureStorageHelper.instance;
 
-  UserLocalDataSource() {
-    // Инициализация с дефолтными данными
-    _cachedUser = UserDto(
-      id: 'user_1',
-      login: 'student',
-      fullName: 'Соваренко Василий Васильевич',
-      group: 'ИКБО-06-22',
-      course: 4,
-      status: 'онлайн',
-    );
-  }
+  static const String _defaultId = 'user_1';
+  static const String _defaultFullName = 'Соваренко Василий Васильевич';
+  static const String _defaultGroup = 'ИКБО-06-22';
+  static const int _defaultCourse = 4;
+  static const String _defaultStatus = 'онлайн';
+  static const String _defaultLogin = 'student';
 
   Future<UserDto> getCurrentUser() async {
-    // Симуляция асинхронной операции
-    await Future.delayed(const Duration(milliseconds: 100));
-    return _cachedUser!;
-  }
+    final login = await _secureStorage.getLogin() ?? _defaultLogin;
 
-  Future<void> updateStatus(String status) async {
-    await Future.delayed(const Duration(milliseconds: 100));
-    _cachedUser = UserDto(
-      id: _cachedUser!.id,
-      login: _cachedUser!.login,
-      fullName: _cachedUser!.fullName,
-      group: _cachedUser!.group,
-      course: _cachedUser!.course,
+    final status = await _prefsHelper.getUserStatus() ?? _defaultStatus;
+
+    return UserDto(
+      id: _defaultId,
+      login: login,
+      fullName: _defaultFullName,
+      group: _defaultGroup,
+      course: _defaultCourse,
       status: status,
     );
   }
 
+  Future<void> updateStatus(String status) async {
+    // Статус - простая настройка, используем SharedPreferences
+    await _prefsHelper.saveUserStatus(status);
+  }
+
   Future<void> updateLogin(String login) async {
-    await Future.delayed(const Duration(milliseconds: 100));
-    _cachedUser = UserDto(
-      id: _cachedUser!.id,
-      login: login,
-      fullName: _cachedUser!.fullName,
-      group: _cachedUser!.group,
-      course: _cachedUser!.course,
-      status: _cachedUser!.status,
-    );
+    // Логин - чувствительные данные, используем только SecureStorage
+    await _secureStorage.saveLogin(login);
   }
 }
 

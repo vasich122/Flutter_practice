@@ -1,63 +1,54 @@
-/// Локальный источник данных для курсов
-class CourseLocalDataSource {
-  final List<Map<String, dynamic>> _courses = [
-    {
-      'title': '1 курс',
-      'description': 'Базовая подготовка по математике и алгоритмам',
-      'modules': [
-        'Математический анализ',
-        'Линейная алгебра',
-        'Алгоритмы и структуры данных',
-        'Основы программирования на Dart',
-      ],
-    },
-    {
-      'title': '2 курс',
-      'description': 'Инженерные дисциплины и проектирование приложений',
-      'modules': [
-        'Операционные системы',
-        'Базы данных и SQL',
-        'Паттерны проектирования',
-        'Мобильная разработка (Flutter)',
-      ],
-    },
-    {
-      'title': '3 курс',
-      'description': 'Продвинутая разработка и проектная деятельность',
-      'modules': [
-        'Разработка UI/UX',
-        'Инженерия требований',
-        'Микросервисная архитектура',
-        'Научно-исследовательский семинар',
-      ],
-    },
-    {
-      'title': '4 курс',
-      'description': 'Дипломное проектирование и индустриальные практики',
-      'modules': [
-        'Проектирование распределённых систем',
-        'Машинное обучение',
-        'Производственная практика',
-        'Преддипломная практика',
-      ],
-    },
-  ];
+import '../core/database_helper.dart';
+import 'package:sqflite/sqflite.dart';
 
-  final Map<String, String> _notes = {};
+/// Локальный источник данных для курсов
+/// Использует только SQLite для хранения курсов, модулей и заметок
+class CourseLocalDataSource {
+  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
 
   Future<List<Map<String, dynamic>>> getCourses() async {
-    await Future.delayed(const Duration(milliseconds: 100));
-    return List.unmodifiable(_courses);
+    final db = await _dbHelper.database;
+    final courses = await db.query('courses', orderBy: 'id ASC');
+    
+    final result = <Map<String, dynamic>>[];
+    for (final course in courses) {
+      final courseId = course['id'] as int;
+      final modules = await db.query(
+        'course_modules',
+        where: 'course_id = ?',
+        whereArgs: [courseId],
+        orderBy: 'id ASC',
+      );
+      
+      result.add({
+        'title': course['title'] as String,
+        'description': course['description'] as String,
+        'modules': modules.map((m) => m['module_name'] as String).toList(),
+      });
+    }
+    
+    return result;
   }
 
   Future<void> saveNote(String module, String note) async {
-    await Future.delayed(const Duration(milliseconds: 100));
-    _notes[module] = note;
+    final db = await _dbHelper.database;
+    await db.insert(
+      'course_module_notes',
+      {'module_name': module, 'note': note},
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
   Future<String?> getNote(String module) async {
-    await Future.delayed(const Duration(milliseconds: 100));
-    return _notes[module];
+    final db = await _dbHelper.database;
+    final maps = await db.query(
+      'course_module_notes',
+      where: 'module_name = ?',
+      whereArgs: [module],
+      limit: 1,
+    );
+    if (maps.isEmpty) return null;
+    return maps.first['note'] as String?;
   }
 }
 

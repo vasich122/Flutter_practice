@@ -1,4 +1,3 @@
-/// DTO для заявления из локального источника данных
 class ApplicationDto {
   final String id;
   final String type;

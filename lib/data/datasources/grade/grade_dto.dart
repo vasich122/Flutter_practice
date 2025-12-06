@@ -1,4 +1,3 @@
-/// DTO для оценки из локального источника данных
 class GradeDto {
   final String id;
   final String subject;

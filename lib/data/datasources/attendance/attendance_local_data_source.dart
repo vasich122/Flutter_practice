@@ -1,53 +1,39 @@
-/// Локальный источник данных для посещаемости
-class AttendanceLocalDataSource {
-  final List<Map<String, dynamic>> _records = [
-    {
-      'subject': 'Математический анализ',
-      'lecturer': 'Петров Н.Н.',
-      'attendance': 96,
-      'missed': 1,
-    },
-    {
-      'subject': 'Алгоритмы и структуры данных',
-      'lecturer': 'Иванова Л.С.',
-      'attendance': 92,
-      'missed': 2,
-    },
-    {
-      'subject': 'Базы данных',
-      'lecturer': 'Соколов Д.В.',
-      'attendance': 88,
-      'missed': 3,
-    },
-    {
-      'subject': 'Проектирование UI/UX',
-      'lecturer': 'Громова Е.А.',
-      'attendance': 100,
-      'missed': 0,
-    },
-    {
-      'subject': 'Машинное обучение',
-      'lecturer': 'Козлов А.И.',
-      'attendance': 85,
-      'missed': 4,
-    },
-  ];
+import '../core/database_helper.dart';
+import 'package:sqflite/sqflite.dart';
 
-  final Map<String, String> _classrooms = {};
+class AttendanceLocalDataSource {
+  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
 
   Future<List<Map<String, dynamic>>> getRecords() async {
-    await Future.delayed(const Duration(milliseconds: 100));
-    return List.unmodifiable(_records);
+    final db = await _dbHelper.database;
+    final maps = await db.query('attendance', orderBy: 'subject ASC');
+    return maps.map((map) => {
+      'subject': map['subject'] as String,
+      'lecturer': map['lecturer'] as String,
+      'attendance': map['attendance'] as int,
+      'missed': map['missed'] as int,
+    }).toList();
   }
 
   Future<void> saveClassroom(String subject, String classroom) async {
-    await Future.delayed(const Duration(milliseconds: 100));
-    _classrooms[subject] = classroom;
+    final db = await _dbHelper.database;
+    await db.insert(
+      'attendance_classrooms',
+      {'subject': subject, 'classroom': classroom},
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
   Future<String?> getClassroom(String subject) async {
-    await Future.delayed(const Duration(milliseconds: 100));
-    return _classrooms[subject];
+    final db = await _dbHelper.database;
+    final maps = await db.query(
+      'attendance_classrooms',
+      where: 'subject = ?',
+      whereArgs: [subject],
+      limit: 1,
+    );
+    if (maps.isEmpty) return null;
+    return maps.first['classroom'] as String?;
   }
 }
 

@@ -1,67 +1,126 @@
 import 'application_dto.dart';
+import '../core/database_helper.dart';
 
-/// Локальный источник данных для заявлений
 class ApplicationLocalDataSource {
-  final List<ApplicationDto> _applications = [];
-  int _nextId = 1;
+  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
 
   Future<List<ApplicationDto>> getApplications() async {
-    await Future.delayed(const Duration(milliseconds: 100));
-    return List.unmodifiable(_applications);
+    final db = await _dbHelper.database;
+    final maps = await db.query('applications', orderBy: 'date DESC');
+    return maps.map((map) {
+      return ApplicationDto(
+        id: map['id'] as String,
+        type: map['type'] as String,
+        description: map['description'] as String,
+        status: map['status'] as String,
+        date: DateTime.parse(map['date'] as String),
+        editable: (map['editable'] as int) == 1,
+      );
+    }).toList();
   }
 
   Future<ApplicationDto> create(String type, String description) async {
-    await Future.delayed(const Duration(milliseconds: 100));
+    final db = await _dbHelper.database;
+    final id = 'app_${DateTime.now().millisecondsSinceEpoch}';
     final application = ApplicationDto(
-      id: 'app_${_nextId++}',
+      id: id,
       type: type,
       description: description,
       status: 'черновик',
       date: DateTime.now(),
       editable: true,
     );
-    _applications.add(application);
+
+    await db.insert('applications', {
+      'id': application.id,
+      'type': application.type,
+      'description': application.description,
+      'status': application.status,
+      'date': application.date.toIso8601String(),
+      'editable': application.editable ? 1 : 0,
+    });
+
     return application;
   }
 
   Future<ApplicationDto> update(String id, String type, String description) async {
-    await Future.delayed(const Duration(milliseconds: 100));
-    final index = _applications.indexWhere((a) => a.id == id);
-    if (index == -1) {
+    final db = await _dbHelper.database;
+    final maps = await db.query(
+      'applications',
+      where: 'id = ?',
+      whereArgs: [id],
+      limit: 1,
+    );
+
+    if (maps.isEmpty) {
       throw Exception('Application not found');
     }
+
+    final existing = maps.first;
     final updated = ApplicationDto(
       id: id,
       type: type,
       description: description,
-      status: _applications[index].status,
-      date: _applications[index].date,
-      editable: _applications[index].editable,
+      status: existing['status'] as String,
+      date: DateTime.parse(existing['date'] as String),
+      editable: (existing['editable'] as int) == 1,
     );
-    _applications[index] = updated;
+
+    await db.update(
+      'applications',
+      {
+        'type': updated.type,
+        'description': updated.description,
+      },
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+
     return updated;
   }
 
   Future<void> delete(String id) async {
-    await Future.delayed(const Duration(milliseconds: 100));
-    _applications.removeWhere((a) => a.id == id);
+    final db = await _dbHelper.database;
+    await db.delete(
+      'applications',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 
   Future<ApplicationDto> send(String id) async {
-    await Future.delayed(const Duration(milliseconds: 100));
-    final index = _applications.indexWhere((a) => a.id == id);
-    if (index == -1) {
+    final db = await _dbHelper.database;
+    final maps = await db.query(
+      'applications',
+      where: 'id = ?',
+      whereArgs: [id],
+      limit: 1,
+    );
+
+    if (maps.isEmpty) {
       throw Exception('Application not found');
     }
+
+    final existing = maps.first;
     final updated = ApplicationDto(
       id: id,
-      type: _applications[index].type,
-      description: _applications[index].description,
+      type: existing['type'] as String,
+      description: existing['description'] as String,
       status: 'отправлено',
-      date: _applications[index].date,
+      date: DateTime.parse(existing['date'] as String),
       editable: false,
     );
-    _applications[index] = updated;
+
+    await db.update(
+      'applications',
+      {
+        'status': updated.status,
+        'editable': 0,
+      },
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+
     return updated;
   }
 }

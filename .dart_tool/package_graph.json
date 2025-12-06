@@ -9,9 +9,11 @@
       "dependencies": [
         "cached_network_image",
         "cupertino_icons",
+        "equatable",
         "flutter",
         "flutter_bloc",
-        "get_it"
+        "get_it",
+        "go_router"
       ],
       "devDependencies": [
         "bloc_test",
@@ -53,6 +55,25 @@
         "stream_channel",
         "test_api",
         "vector_math"
+      ]
+    },
+    {
+      "name": "equatable",
+      "version": "2.0.7",
+      "dependencies": [
+        "collection",
+        "meta"
+      ]
+    },
+    {
+      "name": "go_router",
+      "version": "17.0.0",
+      "dependencies": [
+        "collection",
+        "flutter",
+        "flutter_web_plugins",
+        "logging",
+        "meta"
       ]
     },
     {
@@ -241,6 +262,18 @@
         "stream_channel",
         "string_scanner",
         "term_glyph"
+      ]
+    },
+    {
+      "name": "logging",
+      "version": "1.3.0",
+      "dependencies": []
+    },
+    {
+      "name": "flutter_web_plugins",
+      "version": "0.0.0",
+      "dependencies": [
+        "flutter"
       ]
     },
     {
@@ -612,11 +645,6 @@
     {
       "name": "web",
       "version": "1.1.1",
-      "dependencies": []
-    },
-    {
-      "name": "logging",
-      "version": "1.3.0",
       "dependencies": []
     },
     {

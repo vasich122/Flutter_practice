@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/grade_model.dart';
+import '../../../core/models/grade_model.dart';
 import 'grade_row.dart';
 
 class GradeTable extends StatelessWidget {

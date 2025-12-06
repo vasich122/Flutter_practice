@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pr1/features/applications/model/application_model.dart';
+import 'package:pr1/core/models/application_model.dart';
 import 'package:uuid/uuid.dart';
 
 class ApplicationCubit extends Cubit<List<ApplicationModel>> {

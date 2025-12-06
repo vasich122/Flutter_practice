@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart'; // ← добавьте этот импорт
-import 'features/auth/autorization.dart';
-import 'features/auth/cubit/auth_cubit.dart'; // ← добавьте этот импорт
-import 'shared/app_theme.dart';
-import 'bloc_observer.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'app_router.dart';
+import 'features/auth/cubit/auth_cubit.dart';
+import 'features/profile/cubit/profile_cubit.dart';
+import 'package:pr1/shared/app_theme.dart';
+import 'package:pr1/shared/service_locator.dart';
 
 void main() {
-  Bloc.observer = AppBlocObserver();
-  runApp(
-    BlocProvider(
-      create: (context) => AuthCubit(),
-      child: const MyApp(),
-    ),
-  );
+  setupLocator();
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -20,11 +16,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Личный кабинет студента',
-      theme: AppTheme.light,
-      debugShowCheckedModeBanner: false,
-      home: const AutorizationScreen(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => AuthCubit()),
+        BlocProvider(create: (_) => ProfileCubit()),
+      ],
+      child: MaterialApp.router(
+        routerConfig: appRouter,
+        title: 'Личный кабинет студента',
+        theme: AppTheme.light,
+        debugShowCheckedModeBanner: false,
+      ),
     );
   }
 }

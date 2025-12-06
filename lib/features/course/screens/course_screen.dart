@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../cubit/course_cubit.dart';
+import 'package:go_router/go_router.dart';
 
 class CourseScreen extends StatelessWidget {
   const CourseScreen({super.key});
@@ -79,13 +80,13 @@ class _CourseScreenContent extends StatelessWidget {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
+              onPressed: () => context.pop(), // через GoRouter
               child: const Text('Отмена'),
             ),
             OutlinedButton(
               onPressed: () {
                 cubit.clearNote(subject);
-                Navigator.of(dialogContext).pop();
+                context.pop(); // через GoRouter
               },
               child: const Text('Очистить'),
             ),
@@ -97,7 +98,7 @@ class _CourseScreenContent extends StatelessWidget {
                 } else {
                   cubit.clearNote(subject);
                 }
-                Navigator.of(dialogContext).pop();
+                context.pop(); // через GoRouter
               },
               child: const Text('Сохранить'),
             ),
@@ -116,7 +117,7 @@ class _CourseScreenContent extends StatelessWidget {
         title: const Text('Учебные курсы'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => context.pop(), // переход назад через GoRouter
         ),
       ),
       body: BlocBuilder<CourseCubit, Map<String, String>>(
@@ -180,7 +181,8 @@ class _CourseScreenContent extends StatelessWidget {
                                       .textTheme
                                       .bodySmall
                                       ?.copyWith(
-                                    color: colorScheme.onSurfaceVariant,
+                                    color:
+                                    colorScheme.onSurfaceVariant,
                                   ),
                                 ),
                               ],

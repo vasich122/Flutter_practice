@@ -1,44 +1,72 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import '../../../core/models/user_model.dart';
+import '../../../domain/usecases/get_user_usecase.dart';
+import '../../../domain/usecases/update_user_status_usecase.dart';
+import '../../../shared/service_locator.dart';
 
 class ProfileState extends Equatable {
-  final String fullName;
-  final String group;
-  final int course;
-  final String status;
+  final UserModel? user;
+  final bool isLoading;
+  final String? error;
 
   const ProfileState({
-    required this.fullName,
-    required this.group,
-    required this.course,
-    required this.status,
+    this.user,
+    this.isLoading = false,
+    this.error,
   });
 
   ProfileState copyWith({
-    String? status,
+    UserModel? user,
+    bool? isLoading,
+    String? error,
   }) {
     return ProfileState(
-      fullName: fullName,
-      group: group,
-      course: course,
-      status: status ?? this.status,
+      user: user ?? this.user,
+      isLoading: isLoading ?? this.isLoading,
+      error: error,
     );
   }
 
+  String get fullName => user?.fullName ?? '';
+  String get group => user?.group ?? '';
+  int get course => user?.course ?? 0;
+  String get status => user?.status ?? '';
+
   @override
-  List<Object?> get props => [fullName, group, course, status];
+  List<Object?> get props => [user, isLoading, error];
 }
 
 class ProfileCubit extends Cubit<ProfileState> {
-  ProfileCubit()
-      : super(const ProfileState(
-    fullName: 'Соваренко Василий Васильевич',
-    group: 'ИКБО-06-22',
-    course: 4,
-    status: 'онлайн',
-  ));
+  final GetUserUseCase _getUserUseCase;
+  final UpdateUserStatusUseCase _updateUserStatusUseCase;
 
-  void updateStatus(String status) {
-    emit(state.copyWith(status: status));
+  ProfileCubit({
+    GetUserUseCase? getUserUseCase,
+    UpdateUserStatusUseCase? updateUserStatusUseCase,
+  })  : _getUserUseCase = getUserUseCase ?? locator<GetUserUseCase>(),
+        _updateUserStatusUseCase =
+            updateUserStatusUseCase ?? locator<UpdateUserStatusUseCase>(),
+        super(const ProfileState(isLoading: true)) {
+    loadUser();
+  }
+
+  Future<void> loadUser() async {
+    emit(state.copyWith(isLoading: true, error: null));
+    try {
+      final user = await _getUserUseCase();
+      emit(state.copyWith(user: user, isLoading: false));
+    } catch (e) {
+      emit(state.copyWith(error: e.toString(), isLoading: false));
+    }
+  }
+
+  Future<void> updateStatus(String status) async {
+    try {
+      await _updateUserStatusUseCase(status);
+      await loadUser(); // Перезагружаем данные
+    } catch (e) {
+      emit(state.copyWith(error: e.toString()));
+    }
   }
 }

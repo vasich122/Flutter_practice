@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../cubit/grade_note_cubit.dart';
-import '../models/grade_model.dart';
+import '../../../core/models/grade_model.dart';
+import 'package:go_router/go_router.dart';
 
 class GradeScreen extends StatelessWidget {
   const GradeScreen({super.key});
@@ -51,13 +52,13 @@ class _GradeScreenContent extends StatelessWidget {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
+              onPressed: () => context.pop(), // через GoRouter
               child: const Text('Отмена'),
             ),
             OutlinedButton(
               onPressed: () {
-                context.read<GradeNoteCubit>().clearNote(gradeId);
-                Navigator.of(dialogContext).pop();
+                cubit.clearNote(gradeId);
+                context.pop(); // через GoRouter
               },
               child: const Text('Очистить'),
             ),
@@ -65,11 +66,11 @@ class _GradeScreenContent extends StatelessWidget {
               onPressed: () {
                 final note = controller.text.trim();
                 if (note.isNotEmpty) {
-                  context.read<GradeNoteCubit>().setNote(gradeId, note);
+                  cubit.setNote(gradeId, note);
                 } else {
-                  context.read<GradeNoteCubit>().clearNote(gradeId);
+                  cubit.clearNote(gradeId);
                 }
-                Navigator.of(dialogContext).pop();
+                context.pop(); // через GoRouter
               },
               child: const Text('Сохранить'),
             ),
@@ -89,7 +90,7 @@ class _GradeScreenContent extends StatelessWidget {
         title: const Text('Оценки'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => context.pop(), // переход назад через GoRouter
         ),
       ),
       body: BlocBuilder<GradeNoteCubit, Map<String, String>>(

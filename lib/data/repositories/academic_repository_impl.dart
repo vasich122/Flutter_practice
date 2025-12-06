@@ -2,7 +2,6 @@ import '../../core/models/academic_info_model.dart';
 import '../../domain/repositories/academic_repository.dart';
 import '../datasources/academic/academic_local_data_source.dart';
 
-/// Реализация репозитория академической информации
 class AcademicRepositoryImpl implements AcademicRepository {
   final AcademicLocalDataSource _localDataSource;
 

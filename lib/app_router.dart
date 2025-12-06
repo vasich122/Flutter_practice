@@ -10,6 +10,9 @@ import 'features/course/screens/course_screen.dart';
 import 'features/grade/state/grades_container.dart';
 import 'features/profile/screens/profile_screen.dart';
 import 'package:pr1/features/applications/screens/applications_screen.dart';
+import 'features/student_help/screens/student_help_screen.dart';
+import 'features/student_help/screens/test_taking_screen.dart';
+import 'core/models/math_test_model.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/auth',
@@ -62,6 +65,24 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/applications',
       builder: (context, state) => const ApplicationScreen(),
+    ),
+    GoRoute(
+      path: '/student-help',
+      name: 'student-help',
+      builder: (context, state) => const StudentHelpScreen(),
+    ),
+    GoRoute(
+      path: '/test-taking',
+      name: 'test-taking',
+      builder: (context, state) {
+        final test = state.extra as MathTestModel?;
+        if (test == null) {
+          return const Scaffold(
+            body: Center(child: Text('Тест не найден')),
+          );
+        }
+        return TestTakingScreen(test: test);
+      },
     ),
   ],
 );

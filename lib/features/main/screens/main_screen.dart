@@ -31,6 +31,7 @@ class _MainScreenContent extends StatelessWidget {
       {'label': 'Экран посещаемости', 'icon': Icons.calendar_month, 'route': '/attendance'},
       {'label': 'Экран курсов', 'icon': Icons.book_outlined, 'route': '/courses'},
       {'label': 'Экран оценок', 'icon': Icons.grade, 'route': '/grades'},
+      {'label': 'Помощь студенту', 'icon': Icons.help_outline, 'route': '/student-help'},
     ];
 
     return Scaffold(

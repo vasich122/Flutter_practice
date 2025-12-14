@@ -38,43 +38,21 @@
 
 ## 🛠️ Технологический стек
 
-### Основной стек
-- **Flutter** ^3.9.2 - кроссплатформенный фреймворк
-- **Dart** ^3.9.2 - язык программирования
+**Основной стек:** Flutter ^3.9.2, Dart ^3.9.2
 
-### Управление состоянием
-- **flutter_bloc** ^8.1.1 - паттерн BLoC для управления состоянием
-- **equatable** ^2.0.7 - сравнение объектов
+**Управление состоянием:** flutter_bloc, equatable
 
-### Навигация
-- **go_router** ^17.0.0 - декларативная маршрутизация
+**Навигация:** go_router
 
-### Работа с данными
-- **dio** ^5.4.0 - HTTP клиент
-- **retrofit** ^4.0.3 - типобезопасный REST API клиент
-- **json_annotation** ^4.8.1 - аннотации для JSON сериализации
+**Работа с данными:** dio, retrofit, json_annotation
 
-### Локальное хранение
-- **drift** ^2.14.1 - реактивная библиотека для работы с SQLite
-- **shared_preferences** ^2.2.2 - хранение простых настроек
-- **flutter_secure_storage** ^9.0.0 - безопасное хранение данных
-- **sqflite** ^2.3.0 - обертка над SQLite
-- **path_provider** ^2.1.1 - пути к директориям приложения
+**Локальное хранение:** drift (SQLite), shared_preferences, flutter_secure_storage
 
-### Dependency Injection
-- **get_it** ^8.0.0 - Service Locator для DI
+**Dependency Injection:** get_it
 
-### Дополнительные библиотеки
-- **cached_network_image** ^3.4.1 - кэширование изображений
-- **url_launcher** ^6.2.5 - открытие URL и внешних приложений
-- **uuid** ^4.3.3 - генерация UUID
+**Дополнительно:** cached_network_image, url_launcher, uuid
 
-### Разработка
-- **build_runner** ^2.4.7 - генерация кода
-- **retrofit_generator** ^8.0.6 - генерация Retrofit клиентов
-- **json_serializable** ^6.7.1 - генерация JSON сериализации
-- **drift_dev** ^2.14.1 - генерация кода для Drift
-- **flutter_lints** ^5.0.0 - линтер для Dart/Flutter
+**Инструменты разработки:** build_runner, retrofit_generator, json_serializable, drift_dev, flutter_lints
 
 ## 📦 Установка и запуск
 

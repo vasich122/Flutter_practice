@@ -1,46 +1,56 @@
 import 'grade_dto.dart';
 import '../core/database_helper.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:drift/drift.dart';
+
 class GradeLocalDataSource {
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
 
   Future<List<GradeDto>> getGrades() async {
-    final db = await _dbHelper.database;
-    final maps = await db.query('grades', orderBy: 'subject ASC');
-    return maps.map((map) => GradeDto.fromJson(map)).toList();
+    final db = _dbHelper.database;
+    final query = db.select(db.grades)..orderBy([(g) => OrderingTerm(expression: g.subject)]);
+    final gradesList = await query.get();
+    
+    return gradesList.map((grade) => GradeDto(
+      id: grade.id,
+      subject: grade.subject,
+      grade: grade.grade,
+    )).toList();
   }
 
   Future<GradeDto?> getGradeById(String id) async {
-    final db = await _dbHelper.database;
-    final maps = await db.query(
-      'grades',
-      where: 'id = ?',
-      whereArgs: [id],
-      limit: 1,
+    final db = _dbHelper.database;
+    final query = db.select(db.grades)..where((g) => g.id.equals(id));
+    final grade = await query.getSingleOrNull();
+    
+    if (grade == null) return null;
+    return GradeDto(
+      id: grade.id,
+      subject: grade.subject,
+      grade: grade.grade,
     );
-    if (maps.isEmpty) return null;
-    return GradeDto.fromJson(maps.first);
   }
 
   Future<void> saveNote(String gradeId, String note) async {
-    final db = await _dbHelper.database;
-    await db.insert(
-      'grade_notes',
-      {'grade_id': gradeId, 'note': note},
-      conflictAlgorithm: ConflictAlgorithm.replace,
+    final db = _dbHelper.database;
+    await db.into(db.gradeNotes).insert(
+      GradeNotesCompanion.insert(
+        gradeId: gradeId,
+        note: note,
+      ),
+      mode: InsertMode.replace,
     );
   }
 
+  Future<void> deleteNote(String gradeId) async {
+    final db = _dbHelper.database;
+    await (db.delete(db.gradeNotes)..where((n) => n.gradeId.equals(gradeId))).go();
+  }
+
   Future<String?> getNote(String gradeId) async {
-    final db = await _dbHelper.database;
-    final maps = await db.query(
-      'grade_notes',
-      where: 'grade_id = ?',
-      whereArgs: [gradeId],
-      limit: 1,
-    );
-    if (maps.isEmpty) return null;
-    return maps.first['note'] as String?;
+    final db = _dbHelper.database;
+    final query = db.select(db.gradeNotes)..where((n) => n.gradeId.equals(gradeId));
+    final note = await query.getSingleOrNull();
+    return note?.note;
   }
 }
 

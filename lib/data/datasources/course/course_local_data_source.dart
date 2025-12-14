@@ -1,54 +1,62 @@
 import '../core/database_helper.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:drift/drift.dart';
 
-/// Локальный источник данных для курсов
-/// Использует только SQLite для хранения курсов, модулей и заметок
 class CourseLocalDataSource {
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
 
   Future<List<Map<String, dynamic>>> getCourses() async {
-    final db = await _dbHelper.database;
-    final courses = await db.query('courses', orderBy: 'id ASC');
+    final db = _dbHelper.database;
+    final query = db.select(db.courses)..orderBy([(c) => OrderingTerm(expression: c.id)]);
+    final coursesList = await query.get();
     
     final result = <Map<String, dynamic>>[];
-    for (final course in courses) {
-      final courseId = course['id'] as int;
-      final modules = await db.query(
-        'course_modules',
-        where: 'course_id = ?',
-        whereArgs: [courseId],
-        orderBy: 'id ASC',
-      );
+    for (final course in coursesList) {
+      final modulesQuery = db.select(db.courseModules)
+        ..where((m) => m.courseId.equals(course.id))
+        ..orderBy([(m) => OrderingTerm(expression: m.id)]);
+      final modules = await modulesQuery.get();
       
       result.add({
-        'title': course['title'] as String,
-        'description': course['description'] as String,
-        'modules': modules.map((m) => m['module_name'] as String).toList(),
+        'title': course.title,
+        'description': course.description,
+        'modules': modules.map((m) => m.moduleName).toList(),
       });
     }
     
     return result;
   }
 
-  Future<void> saveNote(String module, String note) async {
-    final db = await _dbHelper.database;
-    await db.insert(
-      'course_module_notes',
-      {'module_name': module, 'note': note},
-      conflictAlgorithm: ConflictAlgorithm.replace,
+  Future<void> saveNote(String moduleName, String note) async {
+    final db = _dbHelper.database;
+    await db.into(db.courseModuleNotes).insert(
+      CourseModuleNotesCompanion.insert(
+        moduleName: moduleName,
+        note: note,
+      ),
+      mode: InsertMode.replace,
     );
   }
 
-  Future<String?> getNote(String module) async {
-    final db = await _dbHelper.database;
-    final maps = await db.query(
-      'course_module_notes',
-      where: 'module_name = ?',
-      whereArgs: [module],
-      limit: 1,
-    );
-    if (maps.isEmpty) return null;
-    return maps.first['note'] as String?;
+  Future<void> deleteNote(String moduleName) async {
+    final db = _dbHelper.database;
+    await (db.delete(db.courseModuleNotes)
+      ..where((n) => n.moduleName.equals(moduleName))).go();
+  }
+
+  Future<String?> getNote(String moduleName) async {
+    final db = _dbHelper.database;
+    final query = db.select(db.courseModuleNotes)
+      ..where((n) => n.moduleName.equals(moduleName));
+    final note = await query.getSingleOrNull();
+    return note?.note;
+  }
+
+  Future<Map<String, String>> getAllNotes() async {
+    final db = _dbHelper.database;
+    final query = db.select(db.courseModuleNotes);
+    final notes = await query.get();
+    
+    return {for (var n in notes) n.moduleName: n.note};
   }
 }
 

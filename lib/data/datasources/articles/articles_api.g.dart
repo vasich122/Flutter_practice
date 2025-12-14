@@ -57,7 +57,13 @@ class _ArticlesApi implements ArticlesApi {
           baseUrl,
         )));
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    return _result;
+    late Response<Map<String, dynamic>> _value;
+    try {
+      _value = _result;
+    } on Object catch (e, s) {
+      rethrow;
+    }
+    return _value;
   }
 
   @override
@@ -92,7 +98,212 @@ class _ArticlesApi implements ArticlesApi {
           baseUrl,
         )));
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    return _result;
+    late Response<Map<String, dynamic>> _value;
+    try {
+      _value = _result;
+    } on Object catch (e, s) {
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<Response<Map<String, dynamic>>> getArticleByIdRaw(String id) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<Response<Map<String, dynamic>>>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/works/${id}',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late Response<Map<String, dynamic>> _value;
+    try {
+      _value = _result;
+    } on Object catch (e, s) {
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<Response<Map<String, dynamic>>> searchArticlesByAuthorRaw(
+    String filter,
+    int perPage,
+    String sort,
+    String? search,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'filter': filter,
+      r'per_page': perPage,
+      r'sort': sort,
+      r'search': search,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<Response<Map<String, dynamic>>>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/works',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late Response<Map<String, dynamic>> _value;
+    try {
+      _value = _result;
+    } on Object catch (e, s) {
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<Response<Map<String, dynamic>>> searchArticlesByDoiRaw(
+    String filter,
+    int perPage,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'filter': filter,
+      r'per_page': perPage,
+    };
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<Response<Map<String, dynamic>>>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/works',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late Response<Map<String, dynamic>> _value;
+    try {
+      _value = _result;
+    } on Object catch (e, s) {
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<Response<Map<String, dynamic>>> getMostCitedArticlesRaw(
+    String? filter,
+    int perPage,
+    String sort,
+    String? search,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'filter': filter,
+      r'per_page': perPage,
+      r'sort': sort,
+      r'search': search,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<Response<Map<String, dynamic>>>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/works',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late Response<Map<String, dynamic>> _value;
+    try {
+      _value = _result;
+    } on Object catch (e, s) {
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<Response<Map<String, dynamic>>> searchArticlesByYearRaw(
+    String filter,
+    int perPage,
+    String sort,
+    String? search,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'filter': filter,
+      r'per_page': perPage,
+      r'sort': sort,
+      r'search': search,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<Response<Map<String, dynamic>>>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/works',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late Response<Map<String, dynamic>> _value;
+    try {
+      _value = _result;
+    } on Object catch (e, s) {
+      rethrow;
+    }
+    return _value;
   }
 
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {

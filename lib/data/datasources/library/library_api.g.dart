@@ -52,7 +52,13 @@ class _LibraryApi implements LibraryApi {
           baseUrl,
         )));
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    return _result;
+    late Response<Map<String, dynamic>> _value;
+    try {
+      _value = _result;
+    } on Object catch (e, s) {
+      rethrow;
+    }
+    return _value;
   }
 
   @override
@@ -84,7 +90,194 @@ class _LibraryApi implements LibraryApi {
           baseUrl,
         )));
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    return _result;
+    late Response<Map<String, dynamic>> _value;
+    try {
+      _value = _result;
+    } on Object catch (e, s) {
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<Response<Map<String, dynamic>>> getBookByKeyRaw(String key) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<Response<Map<String, dynamic>>>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/works/${key}.json',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late Response<Map<String, dynamic>> _value;
+    try {
+      _value = _result;
+    } on Object catch (e, s) {
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<Response<Map<String, dynamic>>> searchBooksByAuthorRaw(
+    String authorName,
+    int limit,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'author': authorName,
+      r'limit': limit,
+    };
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<Response<Map<String, dynamic>>>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/search.json',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late Response<Map<String, dynamic>> _value;
+    try {
+      _value = _result;
+    } on Object catch (e, s) {
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<Response<Map<String, dynamic>>> searchBooksBySubjectRaw(
+    String subject,
+    int limit,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'subject': subject,
+      r'limit': limit,
+    };
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<Response<Map<String, dynamic>>>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/search.json',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late Response<Map<String, dynamic>> _value;
+    try {
+      _value = _result;
+    } on Object catch (e, s) {
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<Response<Map<String, dynamic>>> getBookByIsbnRaw(String isbn) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<Response<Map<String, dynamic>>>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/isbn/${isbn}.json',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late Response<Map<String, dynamic>> _value;
+    try {
+      _value = _result;
+    } on Object catch (e, s) {
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<Response<Map<String, dynamic>>> searchBooksByYearRaw(
+    int year,
+    int limit,
+    String? query,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'first_publish_year': year,
+      r'limit': limit,
+      r'q': query,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<Response<Map<String, dynamic>>>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/search.json',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late Response<Map<String, dynamic>> _value;
+    try {
+      _value = _result;
+    } on Object catch (e, s) {
+      rethrow;
+    }
+    return _value;
   }
 
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {

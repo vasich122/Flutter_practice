@@ -2,7 +2,6 @@ import '../../core/models/attendance_record_model.dart';
 import '../../domain/repositories/attendance_repository.dart';
 import '../datasources/attendance/attendance_local_data_source.dart';
 
-/// Реализация репозитория посещаемости
 class AttendanceRepositoryImpl implements AttendanceRepository {
   final AttendanceLocalDataSource _localDataSource;
 
@@ -11,16 +10,8 @@ class AttendanceRepositoryImpl implements AttendanceRepository {
   @override
   Future<List<AttendanceRecordModel>> getAttendanceRecords() async {
     final records = await _localDataSource.getRecords();
-    final classrooms = <String, String>{};
-    
-    // Получаем кабинеты для всех предметов
-    for (final record in records) {
-      final subject = record['subject'] as String;
-      final classroom = await _localDataSource.getClassroom(subject);
-      if (classroom != null) {
-        classrooms[subject] = classroom;
-      }
-    }
+    // Получаем все кабинеты одним запросом для оптимизации
+    final classrooms = await _localDataSource.getAllClassrooms();
 
     return records.map((record) {
       return AttendanceRecordModel(

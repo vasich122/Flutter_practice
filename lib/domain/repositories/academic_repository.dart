@@ -5,7 +5,6 @@ abstract class AcademicRepository {
   /// Получить академическую информацию
   Future<AcademicInfoModel> getAcademicInfo();
 
-  /// Обновить научные активности
   Future<void> updateScientificActivities(String activities);
 }
 

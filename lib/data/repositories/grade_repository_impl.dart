@@ -26,6 +26,11 @@ class GradeRepositoryImpl implements GradeRepository {
   }
 
   @override
+  Future<void> deleteGradeNote(String gradeId) async {
+    await _localDataSource.deleteNote(gradeId);
+  }
+
+  @override
   Future<String?> getGradeNote(String gradeId) async {
     return await _localDataSource.getNote(gradeId);
   }

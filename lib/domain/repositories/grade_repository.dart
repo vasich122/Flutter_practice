@@ -7,6 +7,8 @@ abstract class GradeRepository {
 
   Future<void> saveGradeNote(String gradeId, String note);
 
+  Future<void> deleteGradeNote(String gradeId);
+
   Future<String?> getGradeNote(String gradeId);
 }
 

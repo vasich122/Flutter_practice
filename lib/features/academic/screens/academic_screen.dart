@@ -15,11 +15,10 @@ class AcademicScreen extends StatelessWidget {
 }
 
 class _AcademicScreenContent extends StatelessWidget {
-  const _AcademicScreenContent({super.key});
+  const _AcademicScreenContent();
 
   void _showAddActivityDialog(BuildContext context) {
     final cubit = context.read<AcademicCubit>();
-    final currentText = cubit.state;
 
     final controller = TextEditingController();
 

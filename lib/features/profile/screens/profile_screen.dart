@@ -110,10 +110,10 @@ class ProfileScreen extends StatelessWidget {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('ФИО: ${profileState.fullName}',
+                        Text('ФИО: Соваренко Василий Васильевич',
                             style: Theme.of(context).textTheme.titleMedium),
                         const SizedBox(height: 8),
-                        Text('Группа: ${profileState.group}',
+                        Text('Группа: ИКБО-06-22',
                             style: Theme.of(context).textTheme.bodyLarge),
                         const SizedBox(height: 8),
                         Text('Курс: ${profileState.course}',

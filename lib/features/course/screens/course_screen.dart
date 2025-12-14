@@ -59,7 +59,7 @@ class CourseScreen extends StatelessWidget {
 }
 
 class _CourseScreenContent extends StatelessWidget {
-  const _CourseScreenContent({super.key});
+  const _CourseScreenContent();
 
   void _showNoteDialog(BuildContext context, String subject) {
     final cubit = context.read<CourseCubit>();
@@ -84,21 +84,21 @@ class _CourseScreenContent extends StatelessWidget {
               child: const Text('Отмена'),
             ),
             OutlinedButton(
-              onPressed: () {
-                cubit.clearNote(subject);
-                context.pop(); // через GoRouter
+              onPressed: () async {
+                await cubit.clearNote(subject);
+                if (context.mounted) context.pop();
               },
               child: const Text('Очистить'),
             ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 final note = controller.text.trim();
                 if (note.isNotEmpty) {
-                  cubit.setNote(subject, note);
+                  await cubit.setNote(subject, note);
                 } else {
-                  cubit.clearNote(subject);
+                  await cubit.clearNote(subject);
                 }
-                context.pop(); // через GoRouter
+                if (context.mounted) context.pop();
               },
               child: const Text('Сохранить'),
             ),

@@ -31,7 +31,7 @@ class GradeScreen extends StatelessWidget {
 }
 
 class _GradeScreenContent extends StatelessWidget {
-  const _GradeScreenContent({super.key});
+  const _GradeScreenContent();
 
   void _showNoteDialog(BuildContext context, String gradeId, String subject) {
     final cubit = context.read<GradeNoteCubit>();
@@ -56,21 +56,25 @@ class _GradeScreenContent extends StatelessWidget {
               child: const Text('Отмена'),
             ),
             OutlinedButton(
-              onPressed: () {
-                cubit.clearNote(gradeId);
-                context.pop(); // через GoRouter
+              onPressed: () async {
+                await cubit.clearNote(gradeId);
+                if (context.mounted) {
+                  context.pop(); // через GoRouter
+                }
               },
               child: const Text('Очистить'),
             ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 final note = controller.text.trim();
                 if (note.isNotEmpty) {
-                  cubit.setNote(gradeId, note);
+                  await cubit.setNote(gradeId, note);
                 } else {
-                  cubit.clearNote(gradeId);
+                  await cubit.clearNote(gradeId);
                 }
-                context.pop(); // через GoRouter
+                if (context.mounted) {
+                  context.pop(); // через GoRouter
+                }
               },
               child: const Text('Сохранить'),
             ),
@@ -116,9 +120,7 @@ class _GradeScreenContent extends StatelessWidget {
                     subtitle: const Text('По результатам последней сессии'),
                     trailing: Text(
                       average.toStringAsFixed(2),
-                      style: Theme.of(context)
-                          .textTheme
-                          .headlineSmall
+                      style: Theme.of(context).textTheme.headlineSmall
                           ?.copyWith(color: colorScheme.onPrimaryContainer),
                     ),
                   ),
@@ -132,7 +134,8 @@ class _GradeScreenContent extends StatelessWidget {
                 elevation: 0,
                 color: colorScheme.surfaceContainerHighest,
                 child: InkWell(
-                  onTap: () => _showNoteDialog(context, grade.id, grade.subject),
+                  onTap: () =>
+                      _showNoteDialog(context, grade.id, grade.subject),
                   child: ListTile(
                     leading: CircleAvatar(
                       backgroundColor: colorScheme.secondary,
@@ -152,7 +155,9 @@ class _GradeScreenContent extends StatelessWidget {
                             const TextSpan(text: '\n'),
                             TextSpan(
                               text: '📌 $note',
-                              style: const TextStyle(fontWeight: FontWeight.w500),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ],
                         ],

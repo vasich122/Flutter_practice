@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../cubit/student_help_cubit.dart';
 import 'tabs/books_tab.dart';
-import 'tabs/tests_tab.dart';
 import 'tabs/articles_tab.dart';
 
 class StudentHelpScreen extends StatelessWidget {
@@ -26,7 +25,7 @@ class _StudentHelpScreenContent extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return DefaultTabController(
-      length: 3,
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Помощь студенту'),
@@ -37,7 +36,6 @@ class _StudentHelpScreenContent extends StatelessWidget {
           bottom: TabBar(
             tabs: const [
               Tab(icon: Icon(Icons.library_books), text: 'Библиотека'),
-              Tab(icon: Icon(Icons.quiz), text: 'Тесты'),
               Tab(icon: Icon(Icons.article), text: 'Статьи'),
             ],
             labelColor: colorScheme.primary,
@@ -49,7 +47,6 @@ class _StudentHelpScreenContent extends StatelessWidget {
         body: const TabBarView(
           children: [
             BooksTab(),
-            TestsTab(),
             ArticlesTab(),
           ],
         ),

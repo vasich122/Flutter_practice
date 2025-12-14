@@ -49,7 +49,7 @@ class AttendanceScreen extends StatelessWidget {
 }
 
 class _AttendanceScreenContent extends StatelessWidget {
-  const _AttendanceScreenContent({super.key});
+  const _AttendanceScreenContent();
 
   void _showClassroomDialog(BuildContext context, String subject) {
     final cubit = context.read<AttendanceCubit>();

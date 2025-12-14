@@ -17,7 +17,7 @@ class MainScreen extends StatelessWidget {
 }
 
 class _MainScreenContent extends StatelessWidget {
-  const _MainScreenContent({super.key});
+  const _MainScreenContent();
 
   @override
   Widget build(BuildContext context) {
@@ -39,11 +39,20 @@ class _MainScreenContent extends StatelessWidget {
         title: const Text('Главное меню'),
         actions: [
           IconButton(
+            tooltip: 'Настройки',
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              context.push('/settings');
+            },
+          ),
+          IconButton(
             tooltip: 'Выход',
             icon: const Icon(Icons.logout),
-            onPressed: () {
-              context.read<AuthCubit>().logout();
-              context.pushReplacement('/auth');
+            onPressed: () async {
+              await context.read<AuthCubit>().logout();
+              if (context.mounted) {
+                context.pushReplacement('/auth');
+              }
             },
           ),
         ],
@@ -57,7 +66,7 @@ class _MainScreenContent extends StatelessWidget {
             BlocBuilder<ProfileCubit, ProfileState>(
               builder: (context, state) {
                 return Text(
-                  'Здравствуйте, ${state.fullName}',
+                  'Здравствуйте, Соваренко Василий Васильевич',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     color: colorScheme.primary,
                     fontWeight: FontWeight.w600,

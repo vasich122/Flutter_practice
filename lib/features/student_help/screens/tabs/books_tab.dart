@@ -13,23 +13,23 @@ class BooksTab extends StatefulWidget {
 
 class _BooksTabState extends State<BooksTab> {
   final _searchController = TextEditingController();
-  bool _initialLoad = false;
+  final _authorController = TextEditingController();
+  final _subjectController = TextEditingController();
+  final _yearController = TextEditingController();
+  int _selectedFilter = 0; // 0: общий поиск, 1: по автору, 2: по предмету, 3: по году
 
   @override
   void initState() {
     super.initState();
-    // Загружаем книги при первой загрузке вкладки
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_initialLoad) {
-        _initialLoad = true;
-        context.read<StudentHelpCubit>().loadPopularBooks();
-      }
-    });
+
   }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _authorController.dispose();
+    _subjectController.dispose();
+    _yearController.dispose();
     super.dispose();
   }
 
@@ -41,29 +41,42 @@ class _BooksTabState extends State<BooksTab> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: TextField(
-            controller: _searchController,
-            decoration: InputDecoration(
-              hintText: 'Поиск книг...',
-              prefixIcon: const Icon(Icons.search),
-              suffixIcon: IconButton(
-                icon: const Icon(Icons.clear),
-                onPressed: () {
-                  _searchController.clear();
-                  cubit.loadPopularBooks();
-                },
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _FilterChip(
+                  label: 'Общий',
+                  isSelected: _selectedFilter == 0,
+                  onSelected: () => setState(() => _selectedFilter = 0),
+                ),
+                const SizedBox(width: 8),
+                _FilterChip(
+                  label: 'По автору',
+                  isSelected: _selectedFilter == 1,
+                  onSelected: () => setState(() => _selectedFilter = 1),
+                ),
+                const SizedBox(width: 8),
+                _FilterChip(
+                  label: 'По предмету',
+                  isSelected: _selectedFilter == 2,
+                  onSelected: () => setState(() => _selectedFilter = 2),
+                ),
+                const SizedBox(width: 8),
+                _FilterChip(
+                  label: 'По году',
+                  isSelected: _selectedFilter == 3,
+                  onSelected: () => setState(() => _selectedFilter = 3),
+                ),
+              ],
             ),
-            onSubmitted: (query) {
-              if (query.trim().isNotEmpty) {
-                cubit.searchBooks(query);
-              }
-            },
           ),
+        ),
+        // Поле поиска в зависимости от выбранного фильтра
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: _buildSearchField(cubit),
         ),
         Expanded(
           child: BlocBuilder<StudentHelpCubit, StudentHelpState>(
@@ -134,6 +147,111 @@ class _BooksTabState extends State<BooksTab> {
       ],
     );
   }
+
+  Widget _buildSearchField(StudentHelpCubit cubit) {
+    switch (_selectedFilter) {
+      case 0:
+        return TextField(
+          controller: _searchController,
+          decoration: InputDecoration(
+            hintText: 'Поиск книг...',
+            prefixIcon: const Icon(Icons.search),
+            suffixIcon: IconButton(
+              icon: const Icon(Icons.clear),
+              onPressed: () {
+                _searchController.clear();
+                cubit.loadPopularBooks();
+              },
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          onSubmitted: (query) {
+            if (query.trim().isNotEmpty) {
+              cubit.searchBooks(query);
+            }
+          },
+        );
+      case 1:
+        return TextField(
+          controller: _authorController,
+          decoration: InputDecoration(
+            hintText: 'Введите имя автора...',
+            prefixIcon: const Icon(Icons.person),
+            suffixIcon: IconButton(
+              icon: const Icon(Icons.search),
+              onPressed: () {
+                if (_authorController.text.trim().isNotEmpty) {
+                  cubit.searchBooksByAuthor(_authorController.text.trim());
+                }
+              },
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          onSubmitted: (query) {
+            if (query.trim().isNotEmpty) {
+              cubit.searchBooksByAuthor(query.trim());
+            }
+          },
+        );
+      case 2:
+        return TextField(
+          controller: _subjectController,
+          decoration: InputDecoration(
+            hintText: 'Введите предмет (например: mathematics)...',
+            prefixIcon: const Icon(Icons.category),
+            suffixIcon: IconButton(
+              icon: const Icon(Icons.search),
+              onPressed: () {
+                if (_subjectController.text.trim().isNotEmpty) {
+                  cubit.searchBooksBySubject(_subjectController.text.trim());
+                }
+              },
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          onSubmitted: (query) {
+            if (query.trim().isNotEmpty) {
+              cubit.searchBooksBySubject(query.trim());
+            }
+          },
+        );
+      case 3:
+        return TextField(
+          controller: _yearController,
+          keyboardType: TextInputType.number,
+          decoration: InputDecoration(
+            hintText: 'Введите год (например: 2020)...',
+            prefixIcon: const Icon(Icons.calendar_today),
+            suffixIcon: IconButton(
+              icon: const Icon(Icons.search),
+              onPressed: () {
+                final year = int.tryParse(_yearController.text.trim());
+                if (year != null) {
+                  cubit.searchBooksByYear(year);
+                }
+              },
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          onSubmitted: (query) {
+            final year = int.tryParse(query.trim());
+            if (year != null) {
+              cubit.searchBooksByYear(year);
+            }
+          },
+        );
+      default:
+        return const SizedBox.shrink();
+    }
+  }
 }
 
 class _BookCard extends StatelessWidget {
@@ -149,8 +267,17 @@ class _BookCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,
       child: InkWell(
-        onTap: () {
-          // Можно открыть детальную информацию о книге
+        onTap: () async {
+          // Открываем детальную информацию о книге
+          final cubit = context.read<StudentHelpCubit>();
+          final detailedBook = await cubit.getBookByKey(book.id);
+          if (detailedBook != null && context.mounted) {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => _BookDetailScreen(book: detailedBook),
+              ),
+            );
+          }
         },
         child: Padding(
           padding: const EdgeInsets.all(12.0),
@@ -240,6 +367,144 @@ class _BookCard extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _FilterChip extends StatelessWidget {
+  final String label;
+  final bool isSelected;
+  final VoidCallback onSelected;
+
+  const _FilterChip({
+    required this.label,
+    required this.isSelected,
+    required this.onSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return FilterChip(
+      label: Text(label),
+      selected: isSelected,
+      onSelected: (_) => onSelected(),
+    );
+  }
+}
+
+class _BookDetailScreen extends StatelessWidget {
+  final BookModel book;
+
+  const _BookDetailScreen({required this.book});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Детали книги'),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (book.coverUrl != null)
+              Center(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: CachedNetworkImage(
+                    imageUrl: book.coverUrl!,
+                    width: 200,
+                    height: 300,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Container(
+                      width: 200,
+                      height: 300,
+                      color: colorScheme.surfaceContainerHighest,
+                      child: const Center(child: CircularProgressIndicator()),
+                    ),
+                    errorWidget: (context, url, error) => Container(
+                      width: 200,
+                      height: 300,
+                      color: colorScheme.surfaceContainerHighest,
+                      child: Icon(
+                        Icons.book_outlined,
+                        size: 64,
+                        color: colorScheme.onSurface.withOpacity(0.5),
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            else
+              Center(
+                child: Container(
+                  width: 200,
+                  height: 300,
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    Icons.book_outlined,
+                    size: 64,
+                    color: colorScheme.onSurface.withOpacity(0.5),
+                  ),
+                ),
+              ),
+            const SizedBox(height: 24),
+            Text(
+              book.title,
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Авторы: ${book.authors.join(', ')}',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: colorScheme.onSurface.withOpacity(0.7),
+                  ),
+            ),
+            if (book.publishYear != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                'Год публикации: ${book.publishYear}',
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+            ],
+            if (book.subjects != null && book.subjects!.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: book.subjects!.map((subject) {
+                  return Chip(
+                    label: Text(subject),
+                    labelStyle: const TextStyle(fontSize: 12),
+                  );
+                }).toList(),
+              ),
+            ],
+            if (book.description != null) ...[
+              const SizedBox(height: 24),
+              Text(
+                'Описание',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                book.description!,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+            ],
+          ],
         ),
       ),
     );

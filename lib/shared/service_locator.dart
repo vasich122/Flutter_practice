@@ -1,5 +1,8 @@
 import 'package:get_it/get_it.dart';
 
+// Database
+import '../data/datasources/core/database.dart';
+
 // Data Sources
 import '../data/datasources/user/user_local_data_source.dart';
 import '../data/datasources/grade/grade_local_data_source.dart';
@@ -8,7 +11,6 @@ import '../data/datasources/academic/academic_local_data_source.dart';
 import '../data/datasources/attendance/attendance_local_data_source.dart';
 import '../data/datasources/course/course_local_data_source.dart';
 import '../data/datasources/library/library_api_data_source.dart';
-import '../data/datasources/math_test/math_test_api_data_source.dart';
 import '../data/datasources/articles/articles_api_data_source.dart';
 
 // Repositories
@@ -42,14 +44,25 @@ import '../domain/usecases/get_attendance_records_usecase.dart';
 import '../domain/usecases/get_courses_usecase.dart';
 import '../domain/usecases/search_books_usecase.dart';
 import '../domain/usecases/get_popular_books_usecase.dart';
-import '../domain/usecases/get_math_tests_usecase.dart';
+import '../domain/usecases/get_book_by_key_usecase.dart';
+import '../domain/usecases/search_books_by_author_usecase.dart';
+import '../domain/usecases/search_books_by_subject_usecase.dart';
+import '../domain/usecases/get_book_by_isbn_usecase.dart';
+import '../domain/usecases/search_books_by_year_usecase.dart';
 import '../domain/usecases/search_articles_usecase.dart';
 import '../domain/usecases/get_recent_articles_usecase.dart';
-import '../domain/usecases/get_test_questions_usecase.dart';
+import '../domain/usecases/get_article_by_id_usecase.dart';
+import '../domain/usecases/search_articles_by_author_usecase.dart';
+import '../domain/usecases/search_article_by_doi_usecase.dart';
+import '../domain/usecases/get_most_cited_articles_usecase.dart';
+import '../domain/usecases/search_articles_by_year_usecase.dart';
 
 final GetIt locator = GetIt.instance;
 
 void setupLocator() {
+  // Регистрация базы данных Drift
+  locator.registerLazySingleton<AppDatabase>(() => AppDatabase());
+
   // Регистрация Data Sources
   locator.registerLazySingleton<UserLocalDataSource>(
     () => UserLocalDataSource(),
@@ -72,14 +85,10 @@ void setupLocator() {
   locator.registerLazySingleton<LibraryApiDataSource>(
     () => LibraryApiDataSource(),
   );
-  locator.registerLazySingleton<MathTestApiDataSource>(
-    () => MathTestApiDataSource(),
-  );
   locator.registerLazySingleton<ArticlesApiDataSource>(
     () => ArticlesApiDataSource(),
   );
 
-  // Регистрация Repositories
   locator.registerLazySingleton<UserRepository>(
     () => UserRepositoryImpl(locator<UserLocalDataSource>()),
   );
@@ -101,7 +110,6 @@ void setupLocator() {
   locator.registerLazySingleton<StudentHelpRepository>(
     () => StudentHelpRepositoryImpl(
       libraryDataSource: locator<LibraryApiDataSource>(),
-      mathTestDataSource: locator<MathTestApiDataSource>(),
       articlesDataSource: locator<ArticlesApiDataSource>(),
     ),
   );
@@ -143,8 +151,20 @@ void setupLocator() {
   locator.registerLazySingleton<GetPopularBooksUseCase>(
     () => GetPopularBooksUseCase(locator<StudentHelpRepository>()),
   );
-  locator.registerLazySingleton<GetMathTestsUseCase>(
-    () => GetMathTestsUseCase(locator<StudentHelpRepository>()),
+  locator.registerLazySingleton<GetBookByKeyUseCase>(
+    () => GetBookByKeyUseCase(locator<StudentHelpRepository>()),
+  );
+  locator.registerLazySingleton<SearchBooksByAuthorUseCase>(
+    () => SearchBooksByAuthorUseCase(locator<StudentHelpRepository>()),
+  );
+  locator.registerLazySingleton<SearchBooksBySubjectUseCase>(
+    () => SearchBooksBySubjectUseCase(locator<StudentHelpRepository>()),
+  );
+  locator.registerLazySingleton<GetBookByIsbnUseCase>(
+    () => GetBookByIsbnUseCase(locator<StudentHelpRepository>()),
+  );
+  locator.registerLazySingleton<SearchBooksByYearUseCase>(
+    () => SearchBooksByYearUseCase(locator<StudentHelpRepository>()),
   );
   locator.registerLazySingleton<SearchArticlesUseCase>(
     () => SearchArticlesUseCase(locator<StudentHelpRepository>()),
@@ -152,7 +172,19 @@ void setupLocator() {
   locator.registerLazySingleton<GetRecentArticlesUseCase>(
     () => GetRecentArticlesUseCase(locator<StudentHelpRepository>()),
   );
-  locator.registerLazySingleton<GetTestQuestionsUseCase>(
-    () => GetTestQuestionsUseCase(locator<StudentHelpRepository>()),
+  locator.registerLazySingleton<GetArticleByIdUseCase>(
+    () => GetArticleByIdUseCase(locator<StudentHelpRepository>()),
+  );
+  locator.registerLazySingleton<SearchArticlesByAuthorUseCase>(
+    () => SearchArticlesByAuthorUseCase(locator<StudentHelpRepository>()),
+  );
+  locator.registerLazySingleton<SearchArticleByDoiUseCase>(
+    () => SearchArticleByDoiUseCase(locator<StudentHelpRepository>()),
+  );
+  locator.registerLazySingleton<GetMostCitedArticlesUseCase>(
+    () => GetMostCitedArticlesUseCase(locator<StudentHelpRepository>()),
+  );
+  locator.registerLazySingleton<SearchArticlesByYearUseCase>(
+    () => SearchArticlesByYearUseCase(locator<StudentHelpRepository>()),
   );
 }

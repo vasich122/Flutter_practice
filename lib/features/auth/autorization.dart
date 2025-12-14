@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'cubit/auth_cubit.dart';
 
 class AutorizationScreen extends StatefulWidget {
@@ -23,17 +22,27 @@ class _AutorizationScreenState extends State<AutorizationScreen> {
     super.dispose();
   }
 
-  void _handleLogin() {
+  void _handleLogin() async {
     if (!_formKey.currentState!.validate()) return;
+
+    final messenger = ScaffoldMessenger.of(context);
+    final authCubit = context.read<AuthCubit>();
 
     try {
       final login = _loginController.text.trim();
-      context.read<AuthCubit>().login(login);
-      context.pushReplacement('/main');
+      // Пароль используется только для валидации формы
+      // Токен авторизации сохраняется в SecureStorage для автоматического входа
+
+      await authCubit.login(login);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Ошибка: $e')),
-      );
+      if (context.mounted) {
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text('Ошибка авторизации: ${e.toString()}'),
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
     }
   }
 
